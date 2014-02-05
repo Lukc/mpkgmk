@@ -1,0 +1,48 @@
+# WARNING: Don’t use this unless for testing purposes. It’s gonna build shit.
+name: hello
+description: |
+  A test package.
+
+  It really doesn’t do anything more than printing (translated) hello worlds,
+  so it’s a perfect test package.
+version: 2.8
+release: 1
+source: http://ftp.gnu.org/gnu/hello/hello-$version.tar.gz -> hello-$version.tar.gz
+license: GPL
+depends:
+  - blah >= 1.2
+  - libfoo
+url: http://hello.example
+groups: [system, shell]
+
+build-depends:
+
+# Occasionally required features.
+configure: |
+  cd $dirname
+  ./configure --prefix=$prefix
+build: |
+  cd $dirname
+  make
+install: |
+  cd $dirname
+  make DESTDIR="$PKG" install
+
+splits:
+  - name: libhello
+    license: LGPL
+    depends:
+      - -blah
+      - libfoo
+    split:
+      - $libdir
+
+# Complex features. Never required.
+use:
+  -
+    - flag: nls
+    - depends:
+      - +gettext
+      - blah >= 1.4
+      - -libfoo
+

@@ -1,0 +1,17 @@
+
+#ifndef _H_ERROR
+#define _H_ERROR
+
+/*
+ * IMPORTANT NOTICE: Those values are kinda pure random.
+ */
+
+#define ERROR_DOWNLOAD_FAILED 17
+#define ERROR_BUILDING_FAILED 18
+#define ERROR_PACKAGING_FAILED 19
+#define ERROR_BROKEN_RECIPE 42
+#define ERROR_BROKEN_MODULE 47
+#define ERROR_BROKEN_CONFIGURATION 63
+
+#endif
+

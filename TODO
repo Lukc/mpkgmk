@@ -1,0 +1,32 @@
+
+Core:
+	- Recipe reading… Yes, seriously. There’s currently none.
+	  package.yamls are the priority, here.
+	- Configuration reading. About as important as recipe-reading.
+	  Maybe a mpkgmk.yaml or something would do the trick.
+	- Make the configuration a RecipeElement (or whatnot) tree. We’ll need
+	  many more options and modules might not want to (or rather I don’t want
+	  them to) add stuff to our current Configuration structure.
+
+	- MASSIVE CLEANING (stuff not freed, directories not removed, etc.)
+	- Also, there is no configurable packages_directory.
+
+modules:
+	- Lua
+	- zsh (doesn’t “need” to be done, but we should at least ask for
+	  the possibility of using it)
+	- libarchive
+	- libcurl
+	- assemblers
+		- libarchive/CRUX is a priority (it’s simple and it makes a good example)
+		- pacmen’s. It can be based on the CRUX module and remains pretty simple.
+		- dpkg
+		- rpm
+		note on assemblers: they could be done in Lua or whatnot and not be built ins.
+	- Recipe readers (package.yaml, package.json, …)
+
+build system:
+	- use one
+	- Make it possible to not build modules, although libarchive and
+	  libcurl would pretty much remain mandatory, or strongly recommended.
+
