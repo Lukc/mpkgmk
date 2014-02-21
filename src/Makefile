@@ -9,7 +9,7 @@ CFLAGS += -Wall -Wextra -ansi -pedantic -D_BSD_SOURCE -g
 CFLAGS += -Wno-unused-parameter
 CFLAGS += -fPIC
 
-CFLAGS += '-DBINDIR="${BINDIR}/mpkgmk"'
+CFLAGS += '-DBINDIR="${BINDIR}"'
 CFLAGS += '-DLIBDIR="${LIBDIR}/mpkgmk"'
 CFLAGS += '-DSHAREDIR="${SHAREDIR}/mpkgmk"'
 
@@ -27,6 +27,13 @@ N :=
 main: main.o ui.o recipe.o modules.o workdir.o download.o configuration.o extraction.o build.o assemble.o
 	@$Necho "  [LD]  $@"
 	$Q${CC} -o main -lyaml -ldl $^
+
+${BINDIR}:
+	@mkdir -p ${BINDIR}
+
+install: ${BINDIR}
+	cp main ${BINDIR}/mpkgmk
+	@cd modules; ${MAKE} install
 
 clean:
 	rm -f *.o main
