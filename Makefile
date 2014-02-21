@@ -1,7 +1,6 @@
 
 all:
-	@cd src; ${MAKE}
-	@cd src/modules; ${MAKE}
+	@cd src; ${MAKE} all
 	ln -sf src/main mpkgmk
 
 install:

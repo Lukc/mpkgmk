@@ -16,8 +16,6 @@ recipe_alist_get(RecipeAList *alist, char *key) {
 			alist = alist->next;
 	}
 
-	warning("not found");
-
 	return (RecipeElement*) NULL;
 }
 
@@ -262,7 +260,6 @@ process_yaml_layer(yaml_parser_t *parser, RecipeElement *data) {
 				storage = YAML_SEQUENCE;
 				break;
 			case YAML_SEQUENCE_END_EVENT:
-				error("sequence ending (%s)", alist->key);
 				storage = YAML_VARIABLE;
 				break;
 			case YAML_MAPPING_START_EVENT:
@@ -350,11 +347,6 @@ load_recipe(char *filename) {
 	alist = recipe->data.alist;
 	while (alist) {
 		/* FIXME: We need to substitute ${variables} and $variables in here. */
-		if (!alist->element)
-			info(" «« :| (%s)", alist->key);
-		else
-			info(" »» %s", alist->key);
-
 		alist = alist->next;
 	}
 

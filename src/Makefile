@@ -24,16 +24,21 @@ N :=
 	@$Necho "  [CC]  $@"
 	$Q${CC} ${CFLAGS} -c $<
 
+all: main modules
+
 main: main.o ui.o recipe.o modules.o workdir.o download.o configuration.o extraction.o build.o assemble.o
 	@$Necho "  [LD]  $@"
 	$Q${CC} -o main -lyaml -ldl $^
+
+modules:
+	@cd modules; ${MAKE} LIBDIR="${LIBDIR}" SHAREDIR="${SHAREDIR}" BINDIR="${BINDIR}" PREFIX="${PREFIX}" CFLAGS="${CFLAGS}"
 
 ${BINDIR}:
 	@mkdir -p ${BINDIR}
 
 install: ${BINDIR}
-	cp main ${BINDIR}/mpkgmk
-	@cd modules; ${MAKE} install
+	install -m 755 main ${BINDIR}/mpkgmk
+	@cd modules; ${MAKE} install LIBDIR="${LIBDIR}" SHAREDIR="${SHAREDIR}" BINDIR="${BINDIR}" PREFIX="${PREFIX}" CFLAGS="${CFLAGS}"
 
 clean:
 	rm -f *.o main
