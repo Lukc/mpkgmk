@@ -3,6 +3,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
+#include "../ui.h"
 #include "../modules.h"
 
 int

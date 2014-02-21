@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "../ui.h"
 #include "../modules.h"
 
 /*

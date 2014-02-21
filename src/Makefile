@@ -29,5 +29,6 @@ main: main.o ui.o recipe.o modules.o workdir.o download.o configuration.o extrac
 	$Q${CC} -o main -lyaml -ldl $^
 
 clean:
-	rm *.o main
+	rm -f *.o main
+	@cd modules; ${MAKE} clean
 

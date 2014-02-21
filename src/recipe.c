@@ -130,6 +130,7 @@ get_url(char *string) {
 
 		i++;
 	}
+	filename[i - begin] = '\0';
 
 	return filename;
 }
