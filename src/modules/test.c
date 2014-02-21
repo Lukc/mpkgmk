@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "../modules.h"
 
 /*
  * FIXME: Those things should at least do something. At least create
@@ -70,9 +75,7 @@ test_assembler(RecipeElement *recipe, Configuration *configuration) {
 }
 
 void
-add_test_module(Module ***modules, int *count) {
-	Module *module;
-
+load_module(Module *module) {
 	module = (Module*) malloc(sizeof(Module));
 	module->name = "c-test";
 	module->downloader = test_downloader;
@@ -81,7 +84,5 @@ add_test_module(Module ***modules, int *count) {
 	module->build = test_build;
 	module->install = test_install;
 	module->assembler = test_assembler;
-
-	add_module(modules, module, count);
 }
 

@@ -1,6 +1,9 @@
-
+#include <stdlib.h>
+#include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
+
+#include "../modules.h"
 
 int
 module_archive_extractor(Source *source, Configuration *configuration) {
@@ -17,12 +20,16 @@ module_archive_extractor(Source *source, Configuration *configuration) {
 	));
 	sprintf(filename, "%s/%s", configuration->sources_directory, source->filename);
 
-	/* FIXME: This is shit… */
+	/* FIXME: This is shit… (but probably works) */
 	if (
-		strlen(filename) < 8 &&
-		strcmp(filename + sizeof(char) * (strlen(filename) - 7), ".tar.gz") &&
-		strcmp(filename + sizeof(char) * (strlen(filename) - 7), ".tar.xz") &&
-		strcmp(filename + sizeof(char) * (strlen(filename) - 8), ".tar.bz2")
+		strlen(filename) < 8 || (
+			strcmp(filename + sizeof(char) *
+				(strlen(filename) - 7), ".tar.gz") &&
+			strcmp(filename + sizeof(char) *
+				(strlen(filename) - 7), ".tar.xz") &&
+			strcmp(filename + sizeof(char) *
+				(strlen(filename) - 8), ".tar.bz2")
+		)
 	) {
 		return MODULE_USELESS;
 	}
@@ -64,10 +71,7 @@ module_archive_extractor(Source *source, Configuration *configuration) {
 }
 
 void
-add_archive_module(Module ***modules, int *count) {
-	Module *module;
-
-	module = (Module*) malloc(sizeof(Module));
+load_module(Module *module) {
 	module->name = "archive";
 	module->downloader = NULL;
 	module->extractor = module_archive_extractor;
@@ -75,7 +79,5 @@ add_archive_module(Module ***modules, int *count) {
 	module->build = NULL;
 	module->install = NULL;
 	module->assembler = NULL;
-
-	add_module(modules, module, count);
 }
 

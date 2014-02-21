@@ -1,7 +1,17 @@
 
+PREFIX   := /usr/local
+BINDIR   := ${PREFIX}/bin
+LIBDIR   := ${PREFIX}/lib
+SHAREDIR := ${PREFIX}/share
+
 CFLAGS += -Wall -Wextra -ansi -pedantic -D_BSD_SOURCE -g
 # Modules and stuff might ignore some data. We don’t want no warning from them.
 CFLAGS += -Wno-unused-parameter
+CFLAGS += -fPIC
+
+CFLAGS += '-DBINDIR="${BINDIR}/mpkgmk"'
+CFLAGS += '-DLIBDIR="${LIBDIR}/mpkgmk"'
+CFLAGS += '-DSHAREDIR="${SHAREDIR}/mpkgmk"'
 
 Q := @
 N := 
@@ -14,9 +24,9 @@ N :=
 	@$Necho "  [CC]  $@"
 	$Q${CC} ${CFLAGS} -c $<
 
-main: main.o recipe.o modules.o ui.o workdir.o download.o configuration.o extraction.o build.o assemble.o
+main: main.o ui.o recipe.o modules.o workdir.o download.o configuration.o extraction.o build.o assemble.o
 	@$Necho "  [LD]  $@"
-	$Q${CC} -o main -larchive -lyaml $^
+	$Q${CC} -o main -lyaml -ldl $^
 
 clean:
 	rm *.o main
