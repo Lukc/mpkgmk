@@ -122,7 +122,7 @@ get_url(char *string) {
 		end = i;
 
 	i = begin;
-	filename = (char*) malloc(sizeof(char) * (end - begin));
+	filename = (char*) malloc(sizeof(char) * (end - begin + 1));
 	while (i < end) {
 		filename[i - begin] = string[i];
 

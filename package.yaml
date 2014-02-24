@@ -7,7 +7,7 @@ description: |
   so it’s a perfect test package.
 version: 2.8
 release: 1
-source: http://ftp.gnu.org/gnu/hello/hello-$version.tar.gz -> hello-$version.tar.gz
+source: http://ftp.gnu.org/gnu/hello/hello-2.8.tar.gz -> hello-2.8.tar.gz
 license: GPL
 depends:
   - blah >= 1.2

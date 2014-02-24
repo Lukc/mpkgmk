@@ -1,16 +1,24 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
 
-#include "../ui.h"
+#include "../ui.c"
 #include "../modules.h"
 
+
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+	size_t written = fwrite(ptr, size, nmemb, stream);
+	return written;
+}
+
+
 int
-module_curl_downloader(Source *source, Configuration *configuration) {
+mpkgmk_downloader(Source *source, Configuration *configuration) {
 	int i;
 	CURL *handle;
-
-	info("inside");
+	FILE *fp;
+	char *filename;
 
 	i = (
 		!strcmp("http", source->protocol) ||
@@ -21,11 +29,23 @@ module_curl_downloader(Source *source, Configuration *configuration) {
 	if (i) {
 		handle = curl_easy_init();
 
+		filename = (char*) malloc(sizeof(char) * (
+			strlen(configuration->working_directory)) +
+			strlen(source->filename) + 2
+		);
+		sprintf(filename, "%s/%s",
+			configuration->working_directory, source->filename);
+
+		fp = fopen(filename, "wb");
 		curl_easy_setopt(handle, CURLOPT_URL, source->url);
+		curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, NULL);
+		curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void*) fp);
 
 		i = curl_easy_perform(handle);
 
 		curl_easy_cleanup(handle);
+		fclose(fp);
+		free(filename);
 
 		if (i == CURLE_OK)
 			return MODULE_SUCCEEDED;
@@ -37,16 +57,5 @@ module_curl_downloader(Source *source, Configuration *configuration) {
 		}
 	} else
 		return MODULE_USELESS;
-}
-
-void
-load_module(Module *module) {
-	module->name = "curl";
-	module->downloader = module_curl_downloader;
-	module->extractor = NULL;
-	module->configure = NULL;
-	module->build = NULL;
-	module->install = NULL;
-	module->assembler = NULL;
 }
 

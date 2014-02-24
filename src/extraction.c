@@ -30,15 +30,16 @@ extract(RecipeElement *recipe, Module **modules, Configuration *configuration, S
 		while (modules[j]) {
 			module = modules[j];
 
-			if (module->extractor)
+			if (module->extractor) {
 				ret = module->extractor(sources[i], configuration);
 
-			if (ret == MODULE_FAILED) {
-				error("An error occured while trying to extract one of the sources of your package.");
-				exit(ERROR_DOWNLOAD_FAILED);
-			} else if (ret == MODULE_SUCCEEDED) {
-				was_extracted = 1;
-				break;
+				if (ret == MODULE_FAILED) {
+					error("An error occured while trying to extract one of the sources of your package.");
+					exit(ERROR_DOWNLOAD_FAILED);
+				} else if (ret == MODULE_SUCCEEDED) {
+					was_extracted = 1;
+					break;
+				}
 			}
 
 			j++;

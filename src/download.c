@@ -32,15 +32,18 @@ download(RecipeElement *recipe, Module **modules, Configuration *configuration, 
 		while (modules[j]) {
 			module = modules[j];
 
-			if (module->downloader)
+			if (module->downloader) {
+				error(" >> %ld  [%i] %s", (long) module->downloader, j, module->name);
 				ret = module->downloader(sources[i], configuration);
+				error("  [returned %i]", ret);
 
-			if (ret == MODULE_FAILED) {
-				error("An error occured while trying to get one of the sources of your package.");
-				exit(ERROR_DOWNLOAD_FAILED);
-			} else if (ret == MODULE_SUCCEEDED) {
-				was_downloaded = 1;
-				break;
+				if (ret == MODULE_FAILED) {
+					error("An error occured while trying to get one of the sources of your package.");
+					exit(ERROR_DOWNLOAD_FAILED);
+				} else if (ret == MODULE_SUCCEEDED) {
+					was_downloaded = 1;
+					break;
+				}
 			}
 
 			j++;

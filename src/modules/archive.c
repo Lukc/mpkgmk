@@ -3,11 +3,11 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "../ui.h"
+#include "../ui.c"
 #include "../modules.h"
 
 int
-module_archive_extractor(Source *source, Configuration *configuration) {
+mpkgmk_extractor(Source *source, Configuration *configuration) {
 	char *filename, *filename2;
 	struct archive *a;
 	struct archive_entry *e;
@@ -69,16 +69,5 @@ module_archive_extractor(Source *source, Configuration *configuration) {
 	archive_read_free(a);
 
 	return MODULE_SUCCEEDED;
-}
-
-void
-load_module(Module *module) {
-	module->name = "archive";
-	module->downloader = NULL;
-	module->extractor = module_archive_extractor;
-	module->configure = NULL;
-	module->build = NULL;
-	module->install = NULL;
-	module->assembler = NULL;
 }
 

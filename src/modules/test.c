@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../ui.h"
+#include "../ui.c"
 #include "../modules.h"
 
 /*
@@ -12,7 +12,7 @@
  */
 
 int
-test_downloader(Source *source, Configuration *configuration) {
+mpkgmk_downloader(Source *source, Configuration *configuration) {
 	char *protocol;
 	protocol = source->protocol;
 
@@ -25,7 +25,7 @@ test_downloader(Source *source, Configuration *configuration) {
 	return MODULE_USELESS;
 }
 int
-test_extractor(Source *source, Configuration *configuration) {
+mpkgmk_extractor(Source *source, Configuration *configuration) {
 	char *filename;
 
 	filename = (char*) malloc(
@@ -45,27 +45,27 @@ test_extractor(Source *source, Configuration *configuration) {
 }
 
 int
-test_configure(RecipeElement *recipe, Configuration *configuration) {
+mpkgmk_configure(RecipeElement *recipe, Configuration *configuration) {
 	info("Test configure.");
 
 	return MODULE_SUCCEEDED;
 }
 
 int
-test_build(RecipeElement *recipe, Configuration *configuration) {
+mpkgmk_build(RecipeElement *recipe, Configuration *configuration) {
 	info("Test build.");
 
 	return MODULE_SUCCEEDED;
 }
 int
-test_install(RecipeElement *recipe, Configuration *configuration) {
+mpkgmk_install(RecipeElement *recipe, Configuration *configuration) {
 	info("Test install.");
 
 	return MODULE_SUCCEEDED;
 }
 
 int
-test_assembler(RecipeElement *recipe, Configuration *configuration) {
+mpkgmk_assembler(RecipeElement *recipe, Configuration *configuration) {
 	if (!strcmp(configuration->assembler, "test")) {
 		info("Test assembler.");
 
@@ -73,17 +73,5 @@ test_assembler(RecipeElement *recipe, Configuration *configuration) {
 	} else {
 		return MODULE_USELESS;
 	}
-}
-
-void
-load_module(Module *module) {
-	module = (Module*) malloc(sizeof(Module));
-	module->name = "c-test";
-	module->downloader = test_downloader;
-	module->extractor = test_extractor;
-	module->configure = test_configure;
-	module->build = test_build;
-	module->install = test_install;
-	module->assembler = test_assembler;
 }
 
