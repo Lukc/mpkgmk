@@ -33,9 +33,7 @@ download(RecipeElement *recipe, Module **modules, Configuration *configuration, 
 			module = modules[j];
 
 			if (module->downloader) {
-				error(" >> %ld  [%i] %s", (long) module->downloader, j, module->name);
 				ret = module->downloader(sources[i], configuration);
-				error("  [returned %i]", ret);
 
 				if (ret == MODULE_FAILED) {
 					error("An error occured while trying to get one of the sources of your package.");

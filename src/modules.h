@@ -11,6 +11,7 @@
 
 typedef int ModuleFunction(RecipeElement *recipe, Configuration *configuration);
 typedef int ModuleSourceFunction(Source *source, Configuration *configuration);
+typedef int ModuleOnLoadFunction(Configuration *configuration);
 
 typedef struct Module {
 	char *name; /* For debug and info messages and assimilated */

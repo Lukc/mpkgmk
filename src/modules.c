@@ -7,6 +7,7 @@
 
 #include "ui.h"
 #include "modules.h"
+#include "configuration.h"
 
 static int
 is_a_module_name(char *string) {
@@ -26,13 +27,14 @@ add_module(Module ***modules, Module *module, int *count) {
 }
 
 Module**
-load_modules() {
+load_modules(Configuration *configuration) {
 	Module **modules, *module;
 	void *handle;
 	int count;
 	char *filename;
 	struct dirent *entry;
 	DIR *directory;
+	ModuleOnLoadFunction *on_load;
 
 	modules = (Module**) NULL;
 	count = 0;
@@ -67,6 +69,11 @@ load_modules() {
 				module->assembler =   (ModuleFunction*) dlsym(handle, "assembler");
 
 				add_module(&modules, module, &count);
+
+				on_load = (ModuleOnLoadFunction*) dlsym(handle, "mpkgmk_on_load");
+				if (on_load) {
+					(*on_load)(configuration);
+				}
 
 #				ifdef DEBUG
 					debug("[module loaded] %s", filename);
