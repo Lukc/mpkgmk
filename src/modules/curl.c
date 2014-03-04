@@ -30,13 +30,17 @@ mpkgmk_downloader(Source *source, Configuration *configuration) {
 		handle = curl_easy_init();
 
 		filename = (char*) malloc(sizeof(char) * (
-			strlen(configuration->working_directory)) +
+			strlen(configuration->sources_directory)) +
 			strlen(source->filename) + 2
 		);
 		sprintf(filename, "%s/%s",
-			configuration->working_directory, source->filename);
+			configuration->sources_directory, source->filename);
 
-		fp = fopen(filename, "wb");
+		fp = fopen(filename, "w+b");
+		if (! fp) {
+			error("Could not open file: %s", filename);
+			return MODULE_FAILED;
+		}
 		curl_easy_setopt(handle, CURLOPT_URL, source->url);
 		curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, NULL);
 		curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void*) fp);
