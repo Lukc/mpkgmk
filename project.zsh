@@ -7,9 +7,10 @@ subdirs=(
 )
 dist=(
 	Makefile
-	project.lua
+	project.zsh
 	package.yaml
 )
 
-CFLAGS="-O0 -g -Wall -Wextra -ansi -pedantic -D_BSD_SOURCE -Wno-unused-parameter"
+CFLAGS="-O0 -g -Wall -Wextra -D_BSD_SOURCE -Wno-unused-parameter"
+#CFLAGS+="-ansi -pedantic"
 

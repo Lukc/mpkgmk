@@ -1,20 +1,52 @@
 #!/usr/bin/env zsh
 
+#TODO:
+#	- Make more checks about whether the “things” built and installed are C.
+#	  (stuff *will* break if you add non-C things as targets)
+#	- Clean some more (or a lot). I mean, this script could even be reused if
+#	  it were cleaner, more readable and somewhat more documented.
+
+# Script output
+
 function info {
-	echo "-- $@"
+	echo "${fg_bold[green]}-- ${fg_bold[white]}$@${reset_color}"
 }
 
 function warning {
-	echo "-- $@" >&2
+	echo "${fg_bold[yellow]}-- $@${reset_color}" >&2
 }
 
 function error {
-	echo "-- ERROR: $@" >&2
+	echo "${fg_bold[red]}-- ERROR: $@${reset_color}" >&2
 }
+
+# Makefiles’ output
 
 function write {
 	echo "$@" >> $Makefile
 }
+
+function CC {
+	echo "${fg_bold[blue]}  [CC]    ${fg_bold[white]}$@${reset_color}"
+}
+
+function LD {
+	echo "${fg_bold[magenta]}  [LD]    ${fg_bold[white]}$@${reset_color}"
+}
+
+function IN {
+	echo "${fg_bold[red]}  [IN]    ${fg_bold[white]}$@${reset_color}"
+}
+
+function RM {
+	echo "${fg_bold[white]}  [RM]    ${fg_bold[white]}$@${reset_color}"
+}
+
+function TAR {
+	echo "${fg_bold[yellow]}  [TAR]   ${fg_bold[white]}$@${reset_color}"
+}
+
+# Specialized helpers
 
 function subdirs {
 	write -n "\t${Q}for i in ${subdirs[@]}; do (cd \"\$\$i\" && $MAKE"
@@ -29,9 +61,19 @@ function subdirs {
 }
 
 function get_distfiles {
-	for file in ${dist[@]} ${sources[@]} ${depends[@]}; do
+	for file in ${dist[@]} $(echo ${sources[@]}) $(echo ${depends[@]}); do
 		echo "$file"
 	done
+
+	typeset -la src
+	src=($(echo ${sources[@]}))
+	for file in ${src[@]}; do
+		typeset -l file="${file%.c}.h"
+		if [[ -e "$file" ]]; then
+			echo "$file"
+		fi
+	done
+
 	for dir in ${subdirs[@]}; do
 		(
 			unset sources depends subdirs
@@ -46,6 +88,10 @@ function get_distfiles {
 		)
 	done
 }
+
+##
+# And so it begins
+##
 
 function main {
 	typeset -a prefixes
@@ -63,10 +109,6 @@ function main {
 		error "No “project.zsh” found in $(pwd)."
 		exit 1
 	fi
-
-	##
-	# And so it begins
-	##
 
 	: > $Makefile
 
@@ -106,35 +148,60 @@ function main {
 					write -n " ${i%.*}.o"
 				done
 				write " ${depends[$target]}"
-				write "\t@echo '  [LD]  ${target}'"
+				write "\t@echo '$(LD ${target})'"
 				write "\t$Q\$(CC) -o ${target} \$(CFLAGS) \$(LDFLAGS) ${ldflags[$target]} ${src[@]//.c/.o}"
 				write
 
 				for i in ${src[@]}; do
 					write "${i%.c}.o: ${i} $([[ -e ${i%.c}.h ]] && echo "${i%.c}.h")"
-					write "\t@echo '  [CC]  ${i%.c}.o'"
+					write "\t@echo '$(CC ${i%.c}.o)'"
 					write "\t$Q\$(CC) \$(CFLAGS) ${cflags[$target]} -c ${i}"
 					write
+
+					write "${i%.c}.o.clean:"
+					write "\t@echo '$(RM ${i%.c}.o)'"
+					write "\t${Q}rm -f ${i%.c}.o"
+					write
 				done
+
+				write "${target}.install: ${target}"
+				write "\t@echo \"$(IN "${install[$target]:-\$(DESTDIR)\$(BINDIR)}/$target")\""
+				write "\t${Q}install -m755 $target ${install[$target]:-\$(DESTDIR)\$(BINDIR)}/$target"
 			elif [[ ${type[$target]} == "dynamic-library" ]]; then
 				for i in ${src[@]}; do
 					write -n " ${i%.*}.o"
 				done
 				write " ${depends[$target]}"
-				write "\t@echo '  [LD]  ${target}'"
+				write "\t@echo '$(LD ${target})'"
 				write "\t$Q\$(CC) -o ${target} -fPIC -shared \$(CFLAGS) \$(LDFLAGS) ${ldflags[$target]} ${src[@]//.c/.o}"
 				write
 				write
 
 				for i in ${src[@]}; do
 					write "${i%.c}.o: ${i} $([[ -e ${i%.c}.h ]] && echo "${i%.c}.h")"
-					write "\t@echo '  [CC]  ${i%.c}.o'"
+					write "\t@echo '$(CC ${i%.c}.o)'"
 					write "\t$Q\$(CC) -fPIC \$(CFLAGS) ${cflags[$target]} -c ${i}"
 					write
+
+					write "${i%.c}.o.clean:"
+					write "\t@echo '$(RM ${i%.c}.o)'"
+					write "\t${Q}rm -f ${i%.c}.o"
+					write
 				done
+
+				# Add a add-symlinks option?
+				write "${target}.install: ${target}"
+				write "\t@echo \"$(IN ${install[$target]:-\$(DESTDIR)\$(LIBDIR)}/$target)\""
+				write "\t${Q}install -m755 $target ${install[$target]:-\$(DESTDIR)\$(LIBDIR)}/$target"
 			else
 				error "Unknown type: ${type[$target]}"
+				error "  (expect trouble, nothing’s gonna work!)"
 			fi
+
+			write "${target}.clean:"
+			write "\t@echo '$(RM ${target})'"
+			write "\t${Q}rm -f ${target}"
+			write
 		)
 	done
 
@@ -144,11 +211,31 @@ function main {
 		write
 	}
 
-	write "install:"
-	write "\t@echo 'Well, it does not work, at this point.'; false"
+	write -n "install: subdirs.install"
+	for target in ${targets[@]}; do
+		write -n " ${target}.install"
+	done
+	write "\n"
 
-	write "clean:"
-	(( ${#targets[@]} > 0 )) && write "\trm -f *.o ${targets[@]}"
+	write "subdirs.install:"
+	subdirs install
+	write
+
+	write -n "clean:"
+	(( ${#targets[@]} > 0 )) && {
+		for target in ${targets[@]}; do
+			write -n " ${target}.clean"
+			(
+				typeset -la src
+				src=($(echo ${sources[$target]}))
+
+				for file in ${src[@]}; do
+					write -n " ${file%.c}.o.clean"
+				done
+			)
+		done
+	}
+	write
 	(( ${#subdirs[@]} > 0 )) && subdirs clean
 	write
 
@@ -168,7 +255,7 @@ function main {
 	for i flag in gz z xz J bz2 j; do
 		write "dist-${i}: \$(PACKAGE)-\$(VERSION).tar.$i"
 		write "\$(PACKAGE)-\$(VERSION).tar.$i: distdir"
-		write "\t@echo '  [TAR]  \$(PACKAGE)-\$(VERSION).tar.$i'"
+		write "\t@echo '$(TAR "\$(PACKAGE)-\$(VERSION).tar.$i")'"
 		write "\t${Q}tar c${flag}f \$(PACKAGE)-\$(VERSION).tar.$i \\"
 		typeset -la distfiles
 		distfiles=($(get_distfiles))
@@ -190,11 +277,38 @@ function main {
 			main $i
 		)
 	done
+
+	write ".PHONY: all subdirs clean distclean dist install uninstall"
+	write
 }
 
 export Makefile=Makefile
 export MAKE='$(MAKE)'
 export Q='$(Q)'
 
+while (($# > 0)); do
+	case "$1" in
+		-c|--colors)
+			autoload -U colors
+			colors
+		;;
+		-h|--help)
+			echo "usage: $0 [OPTIONS]"
+			echo
+			echo "Options:"
+			echo "   -h, --help           Print this help message."
+			echo "   -c, --colors         Use colors in your Makefiles"
+			echo "                        (relies on zsh/colors and your current \$TERM)"
+		;;
+		*)
+			error "unrecognised parameter: $1"
+			return 1
+		;;
+	esac
+
+	shift 1
+done
+
 echo "Generating Makefiles..."
 main
+
