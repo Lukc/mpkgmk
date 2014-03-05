@@ -9,27 +9,31 @@
 #define MODULE_USELESS 0
 #define MODULE_SUCCEEDED 1
 
-typedef int ModuleFunction(RecipeElement *recipe, Configuration *configuration);
-typedef int ModuleSourceFunction(Source *source, Configuration *configuration);
-typedef int ModuleOnLoadFunction(Configuration *configuration);
+typedef int (*ModuleFunction)(RecipeElement*, Configuration*);
+typedef int (*ModuleSourceFunction)(Source*, Configuration*);
+typedef int (*ModuleOnLoadFunction)(Configuration*);
+typedef int (*ModuleOnExitFunction)(Configuration*, int);
 
 typedef struct Module {
 	char *name; /* For debug and info messages and assimilated */
 
 	/* Sources collection tools. */
-	ModuleSourceFunction *downloader;
-	ModuleSourceFunction *extractor;
+	ModuleSourceFunction downloader;
+	ModuleSourceFunction extractor;
 
 	/* Construction tools. */
-	ModuleFunction *configure;
-	ModuleFunction *build;
-	ModuleFunction *install;
+	ModuleFunction configure;
+	ModuleFunction build;
+	ModuleFunction install;
 
 	/* Packages building. */
-	ModuleFunction *assembler;
+	ModuleFunction assembler;
+
+	ModuleOnExitFunction on_exit;
 } Module;
 
 Module** load_modules();
+void modules_on_exit(Configuration*, Module**, int);
 
 #endif
 

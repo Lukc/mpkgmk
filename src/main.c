@@ -50,6 +50,8 @@ int main() {
 	 * become a priority. */
 	assemble(recipe, modules, configuration);
 
+	/* FIXME: Success is assumed, for now */
+	modules_on_exit(configuration, modules, 1);
 	/* FIXME: Cleaning (memory, work dir, sources, whatever) *should* happen here. If you see what I mean. */
 
 	/* FIXME: Great. When am I going to free its content, then? */

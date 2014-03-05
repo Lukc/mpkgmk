@@ -34,7 +34,7 @@ load_modules(Configuration *configuration) {
 	char *filename;
 	struct dirent *entry;
 	DIR *directory;
-	ModuleOnLoadFunction *on_load;
+	ModuleOnLoadFunction on_load;
 
 	modules = (Module**) NULL;
 	count = 0;
@@ -49,7 +49,9 @@ load_modules(Configuration *configuration) {
 	while ( (entry = readdir(directory)) ) {
 		if (is_a_module_name(entry->d_name)) {
 			filename = strdup(LIBDIR);
-			filename = (char*) realloc(filename, sizeof(LIBDIR) + sizeof(entry->d_name) + 2);
+			filename = (char*) realloc(filename, sizeof(char) * (
+				strlen(LIBDIR) + strlen(entry->d_name) + 2
+			));
 			strcat(filename, "/");
 			strcat(filename, entry->d_name);
 
@@ -59,20 +61,22 @@ load_modules(Configuration *configuration) {
 
 				module->name = entry->d_name;
 
-				module->downloader =  (ModuleSourceFunction*) dlsym(handle, "mpkgmk_downloader");
-				module->extractor =   (ModuleSourceFunction*) dlsym(handle, "mpkgmk_extractor");
+				module->downloader =  (ModuleSourceFunction) dlsym(handle, "mpkgmk_downloader");
+				module->extractor =   (ModuleSourceFunction) dlsym(handle, "mpkgmk_extractor");
 
-				module->configure =   (ModuleFunction*) dlsym(handle, "configure");
-				module->build =       (ModuleFunction*) dlsym(handle, "build");
-				module->install =     (ModuleFunction*) dlsym(handle, "install");
+				module->configure =   (ModuleFunction) dlsym(handle, "mpkgmk_configure");
+				module->build =       (ModuleFunction) dlsym(handle, "mpkgmk_build");
+				module->install =     (ModuleFunction) dlsym(handle, "mpkgmk_install");
 
-				module->assembler =   (ModuleFunction*) dlsym(handle, "assembler");
+				module->assembler =   (ModuleFunction) dlsym(handle, "mpkgmk_assembler");
+
+				module->on_exit =     (ModuleOnExitFunction) dlsym(handle, "mpkgmk_on_exit");
 
 				add_module(&modules, module, &count);
 
-				on_load = (ModuleOnLoadFunction*) dlsym(handle, "mpkgmk_on_load");
+				on_load = (ModuleOnLoadFunction) dlsym(handle, "mpkgmk_on_load");
 				if (on_load) {
-					(*on_load)(configuration);
+					on_load(configuration);
 				}
 
 #				ifdef DEBUG
@@ -91,5 +95,22 @@ load_modules(Configuration *configuration) {
 	add_module(&modules, NULL, &count);
 
 	return modules;
+}
+
+void
+modules_on_exit(Configuration *configuration, Module **modules, int status) {
+	Module *module;
+	int i;
+
+	i = 0;
+	module = modules[i];
+	while (module) {
+		if (module->on_exit) {
+			module->on_exit(configuration, status);
+		}
+
+		i++;
+		module = modules[i];
+	}
 }
 

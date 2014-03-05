@@ -151,7 +151,8 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c
+		$(PACKAGE)-$(VERSION)/modules/test.c \
+		$(PACKAGE)-$(VERSION)/modules/lua.c
 
 dist-xz: $(PACKAGE)-$(VERSION).tar.xz
 $(PACKAGE)-$(VERSION).tar.xz: distdir
@@ -183,7 +184,8 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c
+		$(PACKAGE)-$(VERSION)/modules/test.c \
+		$(PACKAGE)-$(VERSION)/modules/lua.c
 
 dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
 $(PACKAGE)-$(VERSION).tar.bz2: distdir
@@ -215,7 +217,8 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c
+		$(PACKAGE)-$(VERSION)/modules/test.c \
+		$(PACKAGE)-$(VERSION)/modules/lua.c
 
 .PHONY: all subdirs clean distclean dist install uninstall
 

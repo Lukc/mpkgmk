@@ -7,7 +7,7 @@ LDFLAGS :=
 
 Q := @
 
-all:  archive.so curl.so test.so
+all:  archive.so curl.so test.so lua.so
 
 archive.so: archive.o 
 	@echo '  [LD]    archive.so'
@@ -16,7 +16,7 @@ archive.so: archive.o
 
 archive.o: archive.c 
 	@echo '  [CC]    archive.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -c archive.c
+	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c archive.c
 
 archive.o.clean:
 	@echo '  [RM]    archive.o'
@@ -36,7 +36,7 @@ curl.so: curl.o
 
 curl.o: curl.c 
 	@echo '  [CC]    curl.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -c curl.c
+	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c curl.c
 
 curl.o.clean:
 	@echo '  [RM]    curl.o'
@@ -56,7 +56,7 @@ test.so: test.o
 
 test.o: test.c 
 	@echo '  [CC]    test.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -c test.c
+	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c test.c
 
 test.o.clean:
 	@echo '  [RM]    test.o'
@@ -69,12 +69,32 @@ test.so.clean:
 	@echo '  [RM]    test.so'
 	$(Q)rm -f test.so
 
-install: subdirs.install archive.so.install curl.so.install test.so.install
+lua.so: lua.o 
+	@echo '  [LD]    lua.so'
+	$(Q)$(CC) -o lua.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -llua lua.o
+
+
+lua.o: lua.c 
+	@echo '  [CC]    lua.o'
+	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c lua.c
+
+lua.o.clean:
+	@echo '  [RM]    lua.o'
+	$(Q)rm -f lua.o
+
+lua.so.install: lua.so
+	@echo "  [IN]    $(LIBDIR)/mpkgmk/lua.so"
+	$(Q)install -m755 lua.so $(LIBDIR)/mpkgmk/lua.so
+lua.so.clean:
+	@echo '  [RM]    lua.so'
+	$(Q)rm -f lua.so
+
+install: subdirs.install archive.so.install curl.so.install test.so.install lua.so.install
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" install); done
 
-clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean test.so.clean test.o.clean
+clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean test.so.clean test.o.clean lua.so.clean lua.o.clean
 
 distclean: clean
 
@@ -93,7 +113,8 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/curl.c \
 		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c
+		$(PACKAGE)-$(VERSION)/test.c \
+		$(PACKAGE)-$(VERSION)/lua.c
 
 dist-xz: $(PACKAGE)-$(VERSION).tar.xz
 $(PACKAGE)-$(VERSION).tar.xz: distdir
@@ -103,7 +124,8 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/curl.c \
 		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c
+		$(PACKAGE)-$(VERSION)/test.c \
+		$(PACKAGE)-$(VERSION)/lua.c
 
 dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
 $(PACKAGE)-$(VERSION).tar.bz2: distdir
@@ -113,7 +135,8 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/curl.c \
 		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c
+		$(PACKAGE)-$(VERSION)/test.c \
+		$(PACKAGE)-$(VERSION)/lua.c
 
 .PHONY: all subdirs clean distclean dist install uninstall
 
