@@ -19,7 +19,7 @@ int main() {
 	Source **sources;
 	char *work_dir;
 
-	recipe = load_recipe("../package.yaml");
+	recipe = load_recipe("./package.yaml");
 
 	modules = load_modules();
 	configuration = load_configuration(recipe);
