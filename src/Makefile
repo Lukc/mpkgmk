@@ -1,6 +1,7 @@
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
+SHAREDIR := $(PREFIX)/share
 
 CFLAGS := -O0 -g -Wall -Wextra -D_BSD_SOURCE -Wno-unused-parameter
 LDFLAGS := 
@@ -15,7 +16,7 @@ mpkgmk: assemble.o build.o configuration.o download.o extraction.o main.o module
 
 assemble.o: assemble.c assemble.h
 	@echo '  [CC]    assemble.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c assemble.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c assemble.c
 
 assemble.o.clean:
 	@echo '  [RM]    assemble.o'
@@ -23,7 +24,7 @@ assemble.o.clean:
 
 build.o: build.c build.h
 	@echo '  [CC]    build.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c build.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c build.c
 
 build.o.clean:
 	@echo '  [RM]    build.o'
@@ -31,7 +32,7 @@ build.o.clean:
 
 configuration.o: configuration.c configuration.h
 	@echo '  [CC]    configuration.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c configuration.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c configuration.c
 
 configuration.o.clean:
 	@echo '  [RM]    configuration.o'
@@ -39,7 +40,7 @@ configuration.o.clean:
 
 download.o: download.c download.h
 	@echo '  [CC]    download.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c download.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c download.c
 
 download.o.clean:
 	@echo '  [RM]    download.o'
@@ -47,7 +48,7 @@ download.o.clean:
 
 extraction.o: extraction.c extraction.h
 	@echo '  [CC]    extraction.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c extraction.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c extraction.c
 
 extraction.o.clean:
 	@echo '  [RM]    extraction.o'
@@ -55,7 +56,7 @@ extraction.o.clean:
 
 main.o: main.c 
 	@echo '  [CC]    main.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c main.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c main.c
 
 main.o.clean:
 	@echo '  [RM]    main.o'
@@ -63,7 +64,7 @@ main.o.clean:
 
 modules.o: modules.c modules.h
 	@echo '  [CC]    modules.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c modules.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c modules.c
 
 modules.o.clean:
 	@echo '  [RM]    modules.o'
@@ -71,7 +72,7 @@ modules.o.clean:
 
 recipe.o: recipe.c recipe.h
 	@echo '  [CC]    recipe.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c recipe.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c recipe.c
 
 recipe.o.clean:
 	@echo '  [RM]    recipe.o'
@@ -79,7 +80,7 @@ recipe.o.clean:
 
 ui.o: ui.c ui.h
 	@echo '  [CC]    ui.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c ui.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c ui.c
 
 ui.o.clean:
 	@echo '  [RM]    ui.o'
@@ -87,32 +88,45 @@ ui.o.clean:
 
 workdir.o: workdir.c workdir.h
 	@echo '  [CC]    workdir.o'
-	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -c workdir.c
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c workdir.c
 
 workdir.o.clean:
 	@echo '  [RM]    workdir.o'
 	$(Q)rm -f workdir.o
 
-mpkgmk.install: mpkgmk
-	@echo "  [IN]    $(DESTDIR)$(BINDIR)/mpkgmk"
+mpkgmk.install: $(DESTDIR)$(BINDIR)
+	@echo '  [IN]    $(BINDIR)/mpkgmk'
 	$(Q)install -m755 mpkgmk $(DESTDIR)$(BINDIR)/mpkgmk
+
 mpkgmk.clean:
 	@echo '  [RM]    mpkgmk'
 	$(Q)rm -f mpkgmk
 
+$(DESTDIR)$(PREFIX):
+	@echo '  [DIR]   $(PREFIX)'
+	$(Q)mkdir -p $(DESTDIR)$(PREFIX)
+$(DESTDIR)$(BINDIR):
+	@echo '  [DIR]   $(BINDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(BINDIR)
+$(DESTDIR)$(LIBDIR):
+	@echo '  [DIR]   $(LIBDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(LIBDIR)
+$(DESTDIR)$(SHAREDIR):
+	@echo '  [DIR]   $(SHAREDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(SHAREDIR)
 subdirs:
-	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)"); done
+	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)"); done
 
 install: subdirs.install mpkgmk.install
 
 subdirs.install:
-	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" install); done
+	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" install); done
 
 clean: mpkgmk.clean assemble.o.clean build.o.clean configuration.o.clean download.o.clean extraction.o.clean main.o.clean modules.o.clean recipe.o.clean ui.o.clean workdir.o.clean
-	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" clean); done
+	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" clean); done
 
 distclean: clean
-	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" distclean); done
+	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" distclean); done
 
 dist: dist-gz dist-xz dist-bz2
 	$(Q)rm -- $(PACKAGE)-$(VERSION)

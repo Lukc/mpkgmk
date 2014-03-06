@@ -89,7 +89,7 @@ mpkgmk_on_load(Configuration *configuration) {
 		{ "base",       luaopen_base },
 		{ NULL,         NULL }
 	};
-	char *filename = "test.lua";
+	char *filename = SHAREDIR "/on_load.lua";
 
 	l = luaL_newstate();
 	open_lualibs(l, lualibs);
@@ -104,18 +104,18 @@ mpkgmk_on_load(Configuration *configuration) {
 
 	struct dirent *entry;
 	DIR *directory;
-	directory = opendir(LIBDIR "/lua");
+	directory = opendir(SHAREDIR "/lua");
 	if (!directory) {
-		error("[modules/lua] Could not open directory %s.", LIBDIR "/lua");
+		error("[modules/lua] Could not open directory %s.", SHAREDIR "/lua");
 
 		lua_close(l);
 		return;
 	}
 
 	while ( (entry = readdir(directory)) ) {
-		filename = strdup(LIBDIR "/lua");
+		filename = strdup(SHAREDIR "/lua");
 		filename = (char*) realloc(filename,
-			strlen(LIBDIR "/lua") + strlen(entry->d_name) + 2
+			strlen(SHAREDIR "/lua") + strlen(entry->d_name) + 2
 		);
 		strcat(filename, "/");
 		strcat(filename, entry->d_name);
@@ -125,6 +125,8 @@ mpkgmk_on_load(Configuration *configuration) {
 			 *        with “.”. (at least) */
 			dofile(l, filename);
 		}
+
+		free(filename);
 	}
 }
 

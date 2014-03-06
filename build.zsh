@@ -1,10 +1,14 @@
 #!/usr/bin/env zsh
 
-#TODO:
+# TODO:
 #	- Make more checks about whether the “things” built and installed are C.
 #	  (stuff *will* break if you add non-C things as targets)
 #	- Clean some more (or a lot). I mean, this script could even be reused if
 #	  it were cleaner, more readable and somewhat more documented.
+#
+# WARNINGS and LIMITATIONS:
+# 	- Using a relative path in DESTDIR= *will* fail.
+#
 
 # Script output
 
@@ -31,7 +35,7 @@ function CC {
 }
 
 function LD {
-	echo "${fg_bold[magenta]}  [LD]    ${fg_bold[white]}$@${reset_color}"
+	echo "${fg_bold[green]}  [LD]    ${fg_bold[white]}$@${reset_color}"
 }
 
 function IN {
@@ -42,6 +46,10 @@ function RM {
 	echo "${fg_bold[white]}  [RM]    ${fg_bold[white]}$@${reset_color}"
 }
 
+function DIR {
+	echo "${fg_bold[magenta]}  [DIR]   ${fg_bold[white]}$@${reset_color}"
+}
+
 function TAR {
 	echo "${fg_bold[yellow]}  [TAR]   ${fg_bold[white]}$@${reset_color}"
 }
@@ -50,7 +58,7 @@ function TAR {
 
 function subdirs {
 	write -n "\t${Q}for i in ${subdirs[@]}; do (cd \"\$\$i\" && $MAKE"
-	write -n ' Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"'
+	write -n ' Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)"'
 	for name path in ${prefixes[@]}; do
 		write -n " ${name}=\"\$(${name})\""
 	done
@@ -94,13 +102,14 @@ function get_distfiles {
 ##
 
 function main {
-	typeset -a prefixes
+	typeset -a prefixes directories
 	typeset -A ldflags cflags sources type depends install
 
 	prefixes=(
 		PREFIX '/usr/local'
 		BINDIR '$(PREFIX)/bin'
 		LIBDIR '$(PREFIX)/lib'
+		SHAREDIR '$(PREFIX)/share'
 	)
 
 	if [[ -f project.zsh && -r project.zsh ]]; then
@@ -164,9 +173,11 @@ function main {
 					write
 				done
 
-				write "${target}.install: ${target}"
-				write "\t@echo \"$(IN "${install[$target]:-\$(DESTDIR)\$(BINDIR)}/$target")\""
-				write "\t${Q}install -m755 $target ${install[$target]:-\$(DESTDIR)\$(BINDIR)}/$target"
+				local installdir="${install[$target]:-\$(BINDIR)}"
+				write "${target}.install: \$(DESTDIR)${installdir}"
+				write "\t@echo '$(IN ${installdir}/${target})'"
+				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
+				write
 			elif [[ ${type[$target]} == "dynamic-library" ]]; then
 				for i in ${src[@]}; do
 					write -n " ${i%.*}.o"
@@ -190,19 +201,48 @@ function main {
 				done
 
 				# Add a add-symlinks option?
-				write "${target}.install: ${target}"
-				write "\t@echo \"$(IN ${install[$target]:-\$(DESTDIR)\$(LIBDIR)}/$target)\""
-				write "\t${Q}install -m755 $target ${install[$target]:-\$(DESTDIR)\$(LIBDIR)}/$target"
+				local installdir="${install[$target]:-\$(LIBDIR)}"
+				write "${target}.install: \$(DESTDIR)${installdir}"
+				write "\t@echo '$(IN ${installdir}/${target})'"
+				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
+				write
+			elif [[ ${type[$target]} == "script" ]]; then
+				write
+				write "\t@echo '  [  ]    ${target}'"
+				write
+
+				local installdir="${install[$target]:-\$(SHAREDIR)/$package}"
+				write "${target}.install: \$(DESTDIR)${installdir}"
+				write "\t@echo '$(IN ${installdir}/${target})'"
+				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
+				write
 			else
 				error "Unknown type: ${type[$target]}"
 				error "  (expect trouble, nothing’s gonna work!)"
 			fi
 
-			write "${target}.clean:"
-			write "\t@echo '$(RM ${target})'"
-			write "\t${Q}rm -f ${target}"
-			write
+			# FIXME: Just find a better way to handle this already.
+			if [[ "${type[$target]}" == "script" ]]; then
+				write "${target}.clean:"
+			else
+				write "${target}.clean:"
+				write "\t@echo '$(RM ${target})'"
+				write "\t${Q}rm -f ${target}"
+				write
+			fi
 		)
+	done
+
+	for dir in ${directories[@]}; do
+		write "\$(DESTDIR)${dir}:"
+		write "\t@echo '$(DIR ${dir})'"
+		write "\t${Q}mkdir -p \$(DESTDIR)${dir}"
+	done
+
+	for dir __ in ${prefixes[@]}; do
+		write "\$(DESTDIR)\$(${dir}):"
+		write "\t@echo '$(DIR "\$(${dir})")'"
+		write "\t${Q}mkdir -p \$(DESTDIR)\$(${dir})"
 	done
 
 	(( ${#subdirs[@]} > 0 )) && {

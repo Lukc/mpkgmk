@@ -1,4 +1,5 @@
-targets=(archive.so curl.so test.so lua.so)
+targets=(archive.so curl.so test.so lua.so on_load.lua)
+directories=('$(LIBDIR)/mpkgmk' '$(SHAREDIR)/mpkgmk'{,/lua})
 
 install[archive.so]='$(LIBDIR)/mpkgmk'
 sources[archive.so]=archive.c
@@ -19,11 +20,15 @@ install[test.so]='$(LIBDIR)/mpkgmk'
 sources[test.so]=test.c
 type[test.so]=dynamic-library
 
+install[on_load.lua]='$(SHAREDIR)/mpkgmk'
+type[on_load.lua]=script
+
 dist=(
 	Makefile project.zsh
 )
 
 for i in ${targets[@]}; do
 	cflags[${i}]='-DLIBDIR=\"$(LIBDIR)/mpkgmk\"'
+	cflags[${i}]+=' -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\"'
 done
 

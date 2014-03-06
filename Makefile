@@ -4,6 +4,7 @@ VERSION = '0.0.1'
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
+SHAREDIR := $(PREFIX)/share
 
 CFLAGS := -O0 -g -Wall -Wextra -D_BSD_SOURCE -Wno-unused-parameter
 LDFLAGS := 
@@ -12,19 +13,31 @@ Q := @
 
 all:  subdirs
 
+$(DESTDIR)$(PREFIX):
+	@echo '  [DIR]   $(PREFIX)'
+	$(Q)mkdir -p $(DESTDIR)$(PREFIX)
+$(DESTDIR)$(BINDIR):
+	@echo '  [DIR]   $(BINDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(BINDIR)
+$(DESTDIR)$(LIBDIR):
+	@echo '  [DIR]   $(LIBDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(LIBDIR)
+$(DESTDIR)$(SHAREDIR):
+	@echo '  [DIR]   $(SHAREDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(SHAREDIR)
 subdirs:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)"); done
+	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)"); done
 
 install: subdirs.install
 
 subdirs.install:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" install); done
+	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" install); done
 
 clean:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" clean); done
+	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" clean); done
 
 distclean: clean
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" distclean); done
+	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" distclean); done
 
 dist: dist-gz dist-xz dist-bz2
 	$(Q)rm -- $(PACKAGE)-$(VERSION)
