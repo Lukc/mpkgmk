@@ -75,7 +75,7 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
-		$(PACKAGE)-$(VERSION)/src/modules/makefile \
+		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
@@ -111,7 +111,7 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
-		$(PACKAGE)-$(VERSION)/src/modules/makefile \
+		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
@@ -147,7 +147,7 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
-		$(PACKAGE)-$(VERSION)/src/modules/makefile \
+		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \

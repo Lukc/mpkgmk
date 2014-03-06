@@ -69,14 +69,14 @@ function subdirs {
 }
 
 function get_distfiles {
-	for file in ${dist[@]} $(echo ${sources[@]}) $(echo ${depends[@]}); do
+	for file in "${dist[@]}" $(echo ${sources[@]}) $(echo ${depends[@]}); do
 		echo "$file"
 	done
 
-	typeset -la src
+	typeset -a src
 	src=($(echo ${sources[@]}))
 	for file in ${src[@]}; do
-		typeset -l file="${file%.c}.h"
+		typeset file="${file%.c}.h"
 		if [[ -e "$file" ]]; then
 			echo "$file"
 		fi
@@ -84,18 +84,26 @@ function get_distfiles {
 
 	for dir in ${subdirs[@]}; do
 		(
-			unset sources depends subdirs
+			unset dist sources depends subdirs
 			typeset -a dist
 			typeset -A sources depends
 
 			cd "$dir"
 			. ./project.zsh
 			for file in $(get_distfiles); do
-				echo "$dir/$file"
+				echo "${dir}/${file}"
 			done
 		)
 	done
 }
+
+function exists {
+	[[ "$(whence -w ${1})" != "${1}: none" ]]
+}
+
+for i in build/*.zsh; do
+	. $i
+done
 
 ##
 # And so it begins
@@ -146,84 +154,34 @@ function main {
 	write "\n"
 
 	for target in ${targets[@]}; do
-		write -n "${target}:"
-
 		(
-			typeset -la src
+			typeset -a src
 			src=($(echo ${sources[$target]}))
 
-			if [[ ${type[$target]} == "binary" ]]; then
-				for i in ${src[@]}; do
-					write -n " ${i%.*}.o"
-				done
-				write " ${depends[$target]}"
-				write "\t@echo '$(LD ${target})'"
-				write "\t$Q\$(CC) -o ${target} \$(CFLAGS) \$(LDFLAGS) ${ldflags[$target]} ${src[@]//.c/.o}"
-				write
-
-				for i in ${src[@]}; do
-					write "${i%.c}.o: ${i} $([[ -e ${i%.c}.h ]] && echo "${i%.c}.h")"
-					write "\t@echo '$(CC ${i%.c}.o)'"
-					write "\t$Q\$(CC) \$(CFLAGS) ${cflags[$target]} -c ${i}"
-					write
-
-					write "${i%.c}.o.clean:"
-					write "\t@echo '$(RM ${i%.c}.o)'"
-					write "\t${Q}rm -f ${i%.c}.o"
-					write
-				done
-
-				local installdir="${install[$target]:-\$(BINDIR)}"
-				write "${target}.install: \$(DESTDIR)${installdir}"
-				write "\t@echo '$(IN ${installdir}/${target})'"
-				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
-				write
-			elif [[ ${type[$target]} == "dynamic-library" ]]; then
-				for i in ${src[@]}; do
-					write -n " ${i%.*}.o"
-				done
-				write " ${depends[$target]}"
-				write "\t@echo '$(LD ${target})'"
-				write "\t$Q\$(CC) -o ${target} -fPIC -shared \$(CFLAGS) \$(LDFLAGS) ${ldflags[$target]} ${src[@]//.c/.o}"
-				write
-				write
-
-				for i in ${src[@]}; do
-					write "${i%.c}.o: ${i} $([[ -e ${i%.c}.h ]] && echo "${i%.c}.h")"
-					write "\t@echo '$(CC ${i%.c}.o)'"
-					write "\t$Q\$(CC) -fPIC \$(CFLAGS) ${cflags[$target]} -c ${i}"
-					write
-
-					write "${i%.c}.o.clean:"
-					write "\t@echo '$(RM ${i%.c}.o)'"
-					write "\t${Q}rm -f ${i%.c}.o"
-					write
-				done
-
-				# Add a add-symlinks option?
-				local installdir="${install[$target]:-\$(LIBDIR)}"
-				write "${target}.install: \$(DESTDIR)${installdir}"
-				write "\t@echo '$(IN ${installdir}/${target})'"
-				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
-				write
-			elif [[ ${type[$target]} == "script" ]]; then
-				write
-				write "\t@echo '  [  ]    ${target}'"
-				write
-
-				local installdir="${install[$target]:-\$(SHAREDIR)/$package}"
-				write "${target}.install: \$(DESTDIR)${installdir}"
-				write "\t@echo '$(IN ${installdir}/${target})'"
-				write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
-				write
+			if exists "${type[$target]}.build"; then
+				${type[$target]}.build
 			else
-				error "Unknown type: ${type[$target]}"
+				error "No predefined rule for the following type: ${type[$target]}"
 				error "  (expect trouble, nothing’s gonna work!)"
 			fi
 
-			# FIXME: Just find a better way to handle this already.
-			if [[ "${type[$target]}" == "script" ]]; then
-				write "${target}.clean:"
+			if exists "${type[$target]}.install"; then
+				${type[$target]}.install
+			else
+				local installdir="${install[$target]}"
+				if [[ -z "${installdir}" ]]; then
+					error "No install[${type[${target}]}] and no default installation directory."
+					error "Your “install” rule will be broken!"
+				else
+					write "${target}.install: \$(DESTDIR)${installdir}"
+					write "\t@echo '$(IN ${installdir}/${target})'"
+					write "\t${Q}install -m755 $target \$(DESTDIR)${installdir}/$target"
+					write
+				fi
+			fi
+
+			if exists "${type[$target]}.clean"; then
+				${type[$target]}.clean
 			else
 				write "${target}.clean:"
 				write "\t@echo '$(RM ${target})'"
@@ -266,7 +224,7 @@ function main {
 		for target in ${targets[@]}; do
 			write -n " ${target}.clean"
 			(
-				typeset -la src
+				typeset -a src
 				src=($(echo ${sources[$target]}))
 
 				for file in ${src[@]}; do
@@ -283,30 +241,32 @@ function main {
 	(( ${#subdirs[@]} > 0 )) && subdirs distclean
 	write
 
-	write "dist: dist-gz dist-xz dist-bz2"
-	write "\t"$Q'rm -- $(PACKAGE)-$(VERSION)'
-	write
+	if $root; then
+		write "dist: dist-gz dist-xz dist-bz2"
+		write "\t"$Q'rm -- $(PACKAGE)-$(VERSION)'
+		write
 
-	write "distdir:"
-	write "\t"$Q'rm -rf -- $(PACKAGE)-$(VERSION)'
-	write "\t"$Q'ln -s -- . $(PACKAGE)-$(VERSION)'
-	write
+		write "distdir:"
+		write "\t"$Q'rm -rf -- $(PACKAGE)-$(VERSION)'
+		write "\t"$Q'ln -s -- . $(PACKAGE)-$(VERSION)'
+		write
 
-	for i flag in gz z xz J bz2 j; do
-		write "dist-${i}: \$(PACKAGE)-\$(VERSION).tar.$i"
-		write "\$(PACKAGE)-\$(VERSION).tar.$i: distdir"
-		write "\t@echo '$(TAR "\$(PACKAGE)-\$(VERSION).tar.$i")'"
-		write "\t${Q}tar c${flag}f \$(PACKAGE)-\$(VERSION).tar.$i \\"
-		typeset -la distfiles
-		distfiles=($(get_distfiles))
-		for i in {1..${#distfiles}}; do
-			write -n "\t\t\$(PACKAGE)-\$(VERSION)/${distfiles[$i]}"
-			if (( i != ${#distfiles} )); then
-				write " \\"
-			fi
+		for i flag in gz z xz J bz2 j; do
+			write "dist-${i}: \$(PACKAGE)-\$(VERSION).tar.$i"
+			write "\$(PACKAGE)-\$(VERSION).tar.$i: distdir"
+			write "\t@echo '$(TAR "\$(PACKAGE)-\$(VERSION).tar.$i")'"
+			write "\t${Q}tar c${flag}f \$(PACKAGE)-\$(VERSION).tar.$i \\"
+			typeset -a distfiles
+			distfiles=($(get_distfiles))
+			for i in {1..${#distfiles}}; do
+				write -n "\t\t\$(PACKAGE)-\$(VERSION)/${distfiles[$i]}"
+				if (( i != ${#distfiles} )); then
+					write " \\"
+				fi
+			done
+			write "\n"
 		done
-		write "\n"
-	done
+	fi
 
 	for i in ${subdirs[@]}; do
 		(
@@ -314,7 +274,7 @@ function main {
 			unset package version subdirs targets dist sources ldflags depends install type
 			typeset -A sources ldflags depends install type
 			typeset -a targets dist
-			main $i
+			root=false main $i
 		)
 	done
 
@@ -350,5 +310,5 @@ while (($# > 0)); do
 done
 
 echo "Generating Makefiles..."
-main
+root=true main
 

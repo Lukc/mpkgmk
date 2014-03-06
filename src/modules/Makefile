@@ -23,7 +23,7 @@ archive.o.clean:
 	@echo '  [RM]    archive.o'
 	$(Q)rm -f archive.o
 
-archive.so.install: $(DESTDIR)$(LIBDIR)/mpkgmk
+archive.so.install: archive.so $(DESTDIR)$(LIBDIR)/mpkgmk
 	@echo '  [IN]    $(LIBDIR)/mpkgmk/archive.so'
 	$(Q)install -m755 archive.so $(DESTDIR)$(LIBDIR)/mpkgmk/archive.so
 
@@ -44,7 +44,7 @@ curl.o.clean:
 	@echo '  [RM]    curl.o'
 	$(Q)rm -f curl.o
 
-curl.so.install: $(DESTDIR)$(LIBDIR)/mpkgmk
+curl.so.install: curl.so $(DESTDIR)$(LIBDIR)/mpkgmk
 	@echo '  [IN]    $(LIBDIR)/mpkgmk/curl.so'
 	$(Q)install -m755 curl.so $(DESTDIR)$(LIBDIR)/mpkgmk/curl.so
 
@@ -65,7 +65,7 @@ test.o.clean:
 	@echo '  [RM]    test.o'
 	$(Q)rm -f test.o
 
-test.so.install: $(DESTDIR)$(LIBDIR)/mpkgmk
+test.so.install: test.so $(DESTDIR)$(LIBDIR)/mpkgmk
 	@echo '  [IN]    $(LIBDIR)/mpkgmk/test.so'
 	$(Q)install -m755 test.so $(DESTDIR)$(LIBDIR)/mpkgmk/test.so
 
@@ -86,7 +86,7 @@ lua.o.clean:
 	@echo '  [RM]    lua.o'
 	$(Q)rm -f lua.o
 
-lua.so.install: $(DESTDIR)$(LIBDIR)/mpkgmk
+lua.so.install: lua.so $(DESTDIR)$(LIBDIR)/mpkgmk
 	@echo '  [IN]    $(LIBDIR)/mpkgmk/lua.so'
 	$(Q)install -m755 lua.so $(DESTDIR)$(LIBDIR)/mpkgmk/lua.so
 
@@ -102,6 +102,7 @@ on_load.lua.install: $(DESTDIR)$(SHAREDIR)/mpkgmk
 	$(Q)install -m755 on_load.lua $(DESTDIR)$(SHAREDIR)/mpkgmk/on_load.lua
 
 on_load.lua.clean:
+
 $(DESTDIR)$(LIBDIR)/mpkgmk:
 	@echo '  [DIR]   $(LIBDIR)/mpkgmk'
 	$(Q)mkdir -p $(DESTDIR)$(LIBDIR)/mpkgmk
@@ -131,46 +132,6 @@ subdirs.install:
 clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean test.so.clean test.o.clean lua.so.clean lua.o.clean on_load.lua.clean
 
 distclean: clean
-
-dist: dist-gz dist-xz dist-bz2
-	$(Q)rm -- $(PACKAGE)-$(VERSION)
-
-distdir:
-	$(Q)rm -rf -- $(PACKAGE)-$(VERSION)
-	$(Q)ln -s -- . $(PACKAGE)-$(VERSION)
-
-dist-gz: $(PACKAGE)-$(VERSION).tar.gz
-$(PACKAGE)-$(VERSION).tar.gz: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.gz'
-	$(Q)tar czf $(PACKAGE)-$(VERSION).tar.gz \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/curl.c \
-		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c \
-		$(PACKAGE)-$(VERSION)/lua.c
-
-dist-xz: $(PACKAGE)-$(VERSION).tar.xz
-$(PACKAGE)-$(VERSION).tar.xz: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.xz'
-	$(Q)tar cJf $(PACKAGE)-$(VERSION).tar.xz \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/curl.c \
-		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c \
-		$(PACKAGE)-$(VERSION)/lua.c
-
-dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
-$(PACKAGE)-$(VERSION).tar.bz2: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.bz2'
-	$(Q)tar cjf $(PACKAGE)-$(VERSION).tar.bz2 \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/curl.c \
-		$(PACKAGE)-$(VERSION)/archive.c \
-		$(PACKAGE)-$(VERSION)/test.c \
-		$(PACKAGE)-$(VERSION)/lua.c
 
 .PHONY: all subdirs clean distclean dist install uninstall
 

@@ -94,9 +94,9 @@ workdir.o.clean:
 	@echo '  [RM]    workdir.o'
 	$(Q)rm -f workdir.o
 
-mpkgmk.install: $(DESTDIR)$(BINDIR)
+mpkgmk.install: mpkgmk
 	@echo '  [IN]    $(BINDIR)/mpkgmk'
-	$(Q)install -m755 mpkgmk $(DESTDIR)$(BINDIR)/mpkgmk
+	$(Q)install -m0755 mpkgmk $(DESTDIR)$(BINDIR)/mpkgmk
 
 mpkgmk.clean:
 	@echo '  [RM]    mpkgmk'
@@ -127,112 +127,6 @@ clean: mpkgmk.clean assemble.o.clean build.o.clean configuration.o.clean downloa
 
 distclean: clean
 	$(Q)for i in modules; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" distclean); done
-
-dist: dist-gz dist-xz dist-bz2
-	$(Q)rm -- $(PACKAGE)-$(VERSION)
-
-distdir:
-	$(Q)rm -rf -- $(PACKAGE)-$(VERSION)
-	$(Q)ln -s -- . $(PACKAGE)-$(VERSION)
-
-dist-gz: $(PACKAGE)-$(VERSION).tar.gz
-$(PACKAGE)-$(VERSION).tar.gz: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.gz'
-	$(Q)tar czf $(PACKAGE)-$(VERSION).tar.gz \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/assemble.c \
-		$(PACKAGE)-$(VERSION)/build.c \
-		$(PACKAGE)-$(VERSION)/configuration.c \
-		$(PACKAGE)-$(VERSION)/download.c \
-		$(PACKAGE)-$(VERSION)/extraction.c \
-		$(PACKAGE)-$(VERSION)/main.c \
-		$(PACKAGE)-$(VERSION)/modules.c \
-		$(PACKAGE)-$(VERSION)/recipe.c \
-		$(PACKAGE)-$(VERSION)/ui.c \
-		$(PACKAGE)-$(VERSION)/workdir.c \
-		$(PACKAGE)-$(VERSION)/error.h \
-		$(PACKAGE)-$(VERSION)/assemble.h \
-		$(PACKAGE)-$(VERSION)/build.h \
-		$(PACKAGE)-$(VERSION)/configuration.h \
-		$(PACKAGE)-$(VERSION)/download.h \
-		$(PACKAGE)-$(VERSION)/extraction.h \
-		$(PACKAGE)-$(VERSION)/modules.h \
-		$(PACKAGE)-$(VERSION)/recipe.h \
-		$(PACKAGE)-$(VERSION)/ui.h \
-		$(PACKAGE)-$(VERSION)/workdir.h \
-		$(PACKAGE)-$(VERSION)/modules/makefile \
-		$(PACKAGE)-$(VERSION)/modules/project.zsh \
-		$(PACKAGE)-$(VERSION)/modules/curl.c \
-		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c \
-		$(PACKAGE)-$(VERSION)/modules/lua.c
-
-dist-xz: $(PACKAGE)-$(VERSION).tar.xz
-$(PACKAGE)-$(VERSION).tar.xz: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.xz'
-	$(Q)tar cJf $(PACKAGE)-$(VERSION).tar.xz \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/assemble.c \
-		$(PACKAGE)-$(VERSION)/build.c \
-		$(PACKAGE)-$(VERSION)/configuration.c \
-		$(PACKAGE)-$(VERSION)/download.c \
-		$(PACKAGE)-$(VERSION)/extraction.c \
-		$(PACKAGE)-$(VERSION)/main.c \
-		$(PACKAGE)-$(VERSION)/modules.c \
-		$(PACKAGE)-$(VERSION)/recipe.c \
-		$(PACKAGE)-$(VERSION)/ui.c \
-		$(PACKAGE)-$(VERSION)/workdir.c \
-		$(PACKAGE)-$(VERSION)/error.h \
-		$(PACKAGE)-$(VERSION)/assemble.h \
-		$(PACKAGE)-$(VERSION)/build.h \
-		$(PACKAGE)-$(VERSION)/configuration.h \
-		$(PACKAGE)-$(VERSION)/download.h \
-		$(PACKAGE)-$(VERSION)/extraction.h \
-		$(PACKAGE)-$(VERSION)/modules.h \
-		$(PACKAGE)-$(VERSION)/recipe.h \
-		$(PACKAGE)-$(VERSION)/ui.h \
-		$(PACKAGE)-$(VERSION)/workdir.h \
-		$(PACKAGE)-$(VERSION)/modules/makefile \
-		$(PACKAGE)-$(VERSION)/modules/project.zsh \
-		$(PACKAGE)-$(VERSION)/modules/curl.c \
-		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c \
-		$(PACKAGE)-$(VERSION)/modules/lua.c
-
-dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
-$(PACKAGE)-$(VERSION).tar.bz2: distdir
-	@echo '  [TAR]   $(PACKAGE)-$(VERSION).tar.bz2'
-	$(Q)tar cjf $(PACKAGE)-$(VERSION).tar.bz2 \
-		$(PACKAGE)-$(VERSION)/Makefile \
-		$(PACKAGE)-$(VERSION)/project.zsh \
-		$(PACKAGE)-$(VERSION)/assemble.c \
-		$(PACKAGE)-$(VERSION)/build.c \
-		$(PACKAGE)-$(VERSION)/configuration.c \
-		$(PACKAGE)-$(VERSION)/download.c \
-		$(PACKAGE)-$(VERSION)/extraction.c \
-		$(PACKAGE)-$(VERSION)/main.c \
-		$(PACKAGE)-$(VERSION)/modules.c \
-		$(PACKAGE)-$(VERSION)/recipe.c \
-		$(PACKAGE)-$(VERSION)/ui.c \
-		$(PACKAGE)-$(VERSION)/workdir.c \
-		$(PACKAGE)-$(VERSION)/error.h \
-		$(PACKAGE)-$(VERSION)/assemble.h \
-		$(PACKAGE)-$(VERSION)/build.h \
-		$(PACKAGE)-$(VERSION)/configuration.h \
-		$(PACKAGE)-$(VERSION)/download.h \
-		$(PACKAGE)-$(VERSION)/extraction.h \
-		$(PACKAGE)-$(VERSION)/modules.h \
-		$(PACKAGE)-$(VERSION)/recipe.h \
-		$(PACKAGE)-$(VERSION)/ui.h \
-		$(PACKAGE)-$(VERSION)/workdir.h \
-		$(PACKAGE)-$(VERSION)/modules/makefile \
-		$(PACKAGE)-$(VERSION)/modules/project.zsh \
-		$(PACKAGE)-$(VERSION)/modules/curl.c \
-		$(PACKAGE)-$(VERSION)/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/modules/test.c \
-		$(PACKAGE)-$(VERSION)/modules/lua.c
 
 .PHONY: all subdirs clean distclean dist install uninstall
 
