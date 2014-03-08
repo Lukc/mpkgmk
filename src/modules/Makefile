@@ -8,7 +8,7 @@ LDFLAGS :=
 
 Q := @
 
-all:  archive.so curl.so test.so lua.so on_load.lua
+all:  archive.so curl.so lua.so on_load.lua
 
 archive.so: archive.o 
 	@echo '  [LD]    archive.so'
@@ -51,27 +51,6 @@ curl.so.install: curl.so $(DESTDIR)$(LIBDIR)/mpkgmk
 curl.so.clean:
 	@echo '  [RM]    curl.so'
 	$(Q)rm -f curl.so
-
-test.so: test.o 
-	@echo '  [LD]    test.so'
-	$(Q)$(CC) -o test.so -fPIC -shared $(CFLAGS) $(LDFLAGS)  test.o
-
-
-test.o: test.c 
-	@echo '  [CC]    test.o'
-	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c test.c
-
-test.o.clean:
-	@echo '  [RM]    test.o'
-	$(Q)rm -f test.o
-
-test.so.install: test.so $(DESTDIR)$(LIBDIR)/mpkgmk
-	@echo '  [IN]    $(LIBDIR)/mpkgmk/test.so'
-	$(Q)install -m755 test.so $(DESTDIR)$(LIBDIR)/mpkgmk/test.so
-
-test.so.clean:
-	@echo '  [RM]    test.so'
-	$(Q)rm -f test.so
 
 lua.so: lua.o 
 	@echo '  [LD]    lua.so'
@@ -124,12 +103,12 @@ $(DESTDIR)$(LIBDIR):
 $(DESTDIR)$(SHAREDIR):
 	@echo '  [DIR]   $(SHAREDIR)'
 	$(Q)mkdir -p $(DESTDIR)$(SHAREDIR)
-install: subdirs.install archive.so.install curl.so.install test.so.install lua.so.install on_load.lua.install
+install: subdirs.install archive.so.install curl.so.install lua.so.install on_load.lua.install
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" install); done
 
-clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean test.so.clean test.o.clean lua.so.clean lua.o.clean on_load.lua.clean
+clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean lua.so.clean lua.o.clean on_load.lua.clean
 
 distclean: clean
 

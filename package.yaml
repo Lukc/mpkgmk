@@ -19,13 +19,14 @@ build-depends:
 
 # Occasionally required features.
 configure: |
-  cd $dirname
+  echo FOOBAR
+  cd hello-2.8
   ./configure --prefix=$prefix
 build: |
-  cd $dirname
+  cd hello-2.8
   make
 install: |
-  cd $dirname
+  cd hello-2.8
   make DESTDIR="$PKG" install
 
 splits:
