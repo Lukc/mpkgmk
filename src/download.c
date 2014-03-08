@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -16,6 +17,7 @@ void
 download(RecipeElement *recipe, Module **modules, Configuration *configuration, Source **sources) {
 	int i, j, ret, was_downloaded;
 	char cwd[PATH_MAX];
+	FILE *f;
 	Module *module;
 
 	if (!configuration->download || !sources)
@@ -29,22 +31,29 @@ download(RecipeElement *recipe, Module **modules, Configuration *configuration, 
 	while (sources[i]) {
 		j = 0;
 		was_downloaded = 0;
-		while (modules[j]) {
-			module = modules[j];
 
-			if (module->downloader) {
-				ret = module->downloader(sources[i], configuration);
+		if ( (f = fopen(sources[j]->filename, "r")) ) {
+			info("%s already downloaded.", sources[j]->filename);
+			was_downloaded = 1;
+			fclose(f);
+		} else {
+			while (modules[j]) {
+				module = modules[j];
 
-				if (ret == MODULE_FAILED) {
-					error("An error occured while trying to get one of the sources of your package.");
-					exit(ERROR_DOWNLOAD_FAILED);
-				} else if (ret == MODULE_SUCCEEDED) {
-					was_downloaded = 1;
-					break;
+				if (module->downloader) {
+					ret = module->downloader(sources[i], configuration);
+
+					if (ret == MODULE_FAILED) {
+						error("An error occured while trying to get one of the sources of your package.");
+						exit(ERROR_DOWNLOAD_FAILED);
+					} else if (ret == MODULE_SUCCEEDED) {
+						was_downloaded = 1;
+						break;
+					}
 				}
-			}
 
-			j++;
+				j++;
+			}
 		}
 
 		if (!was_downloaded) {

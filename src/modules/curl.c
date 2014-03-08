@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <curl/curl.h>
 
@@ -49,13 +50,17 @@ mpkgmk_downloader(Source *source, Configuration *configuration) {
 
 		curl_easy_cleanup(handle);
 		fclose(fp);
-		free(filename);
 
-		if (i == CURLE_OK)
+		if (i == CURLE_OK) {
+			free(filename);
+
 			return MODULE_SUCCEEDED;
-		else {
+		} else {
 			error("Download of %s failed: %s.",
 				source->url, curl_easy_strerror(i));
+
+			unlink(filename);
+			free(filename);
 
 			return MODULE_FAILED;
 		}
