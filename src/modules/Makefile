@@ -10,14 +10,14 @@ Q := @
 
 all:  archive.so curl.so lua.so on_load.lua
 
-archive.so: archive.o 
+archive.so: archive.o  ../mpkgmk.h ../mpkgmk_private.h
 	@echo '  [LD]    archive.so'
 	$(Q)$(CC) -o archive.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -larchive archive.o
 
 
 archive.o: archive.c 
 	@echo '  [CC]    archive.o'
-	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c archive.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c archive.c
 
 archive.o.clean:
 	@echo '  [RM]    archive.o'
@@ -31,14 +31,14 @@ archive.so.clean:
 	@echo '  [RM]    archive.so'
 	$(Q)rm -f archive.so
 
-curl.so: curl.o 
+curl.so: curl.o  ../mpkgmk.h ../mpkgmk_private.h
 	@echo '  [LD]    curl.so'
 	$(Q)$(CC) -o curl.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -lcurl curl.o
 
 
 curl.o: curl.c 
 	@echo '  [CC]    curl.o'
-	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c curl.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c curl.c
 
 curl.o.clean:
 	@echo '  [RM]    curl.o'
@@ -52,14 +52,14 @@ curl.so.clean:
 	@echo '  [RM]    curl.so'
 	$(Q)rm -f curl.so
 
-lua.so: lua.o 
+lua.so: lua.o  ../mpkgmk.h ../mpkgmk_private.h
 	@echo '  [LD]    lua.so'
 	$(Q)$(CC) -o lua.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -llua lua.o
 
 
 lua.o: lua.c 
 	@echo '  [CC]    lua.o'
-	$(Q)$(CC) -fPIC $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c lua.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c lua.c
 
 lua.o.clean:
 	@echo '  [RM]    lua.o'

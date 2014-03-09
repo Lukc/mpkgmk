@@ -11,7 +11,7 @@
 #include <lauxlib.h>
 
 #include "../ui.c"
-#include "../configuration.h"
+#include <mpkgmk_private.h>
 
 /* THE PLAN:
  *	- Use a modules.lua or init.lua or main.lua or something.lua to create

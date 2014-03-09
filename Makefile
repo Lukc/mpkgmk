@@ -66,6 +66,8 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -79,7 +81,15 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/src/modules/lua.c
+		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
 
 dist-xz: $(PACKAGE)-$(VERSION).tar.xz
 $(PACKAGE)-$(VERSION).tar.xz: distdir
@@ -101,6 +111,8 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -114,7 +126,15 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/src/modules/lua.c
+		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
 
 dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
 $(PACKAGE)-$(VERSION).tar.bz2: distdir
@@ -136,6 +156,8 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -149,7 +171,15 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
-		$(PACKAGE)-$(VERSION)/src/modules/lua.c
+		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
 
 .PHONY: all subdirs clean distclean dist install uninstall
 

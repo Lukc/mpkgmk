@@ -4,7 +4,7 @@
 #include <archive_entry.h>
 
 #include "../ui.c"
-#include "../modules.h"
+#include <mpkgmk_private.h>
 
 int
 mpkgmk_extractor(Source *source, Configuration *configuration) {

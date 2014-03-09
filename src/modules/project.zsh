@@ -28,7 +28,10 @@ dist=(
 )
 
 for i in ${targets[@]}; do
-	cflags[${i}]='-DLIBDIR=\"$(LIBDIR)/mpkgmk\"'
+	cflags[${i}]=' -I..'
+	cflags[${i}]+=' -DLIBDIR=\"$(LIBDIR)/mpkgmk\"'
 	cflags[${i}]+=' -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\"'
+
+	depends[${i}]+=" ../mpkgmk.h ../mpkgmk_private.h"
 done
 
