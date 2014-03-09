@@ -30,5 +30,10 @@
 #define ModuleOnExitFunction  MpkgmkModuleOnExitFunction
 #define Module                MpkgmkModule
 
+#define shell                 mpkgmk_shell
+#define info                  mpkgmk_info
+#define warning               mpkgmk_warning
+#define error                 mpkgmk_error
+
 #endif
 

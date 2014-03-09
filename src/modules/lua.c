@@ -10,7 +10,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#include "../ui.c"
 #include <mpkgmk_private.h>
 
 /* THE PLAN:

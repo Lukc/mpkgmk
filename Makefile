@@ -5,6 +5,7 @@ PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
 SHAREDIR := $(PREFIX)/share
+INCLUDEDIR := $(PREFIX)/include
 
 CFLAGS := -O0 -g -Wall -Wextra -D_BSD_SOURCE -Wno-unused-parameter
 LDFLAGS := 
@@ -25,19 +26,22 @@ $(DESTDIR)$(LIBDIR):
 $(DESTDIR)$(SHAREDIR):
 	@echo '  [DIR]   $(SHAREDIR)'
 	$(Q)mkdir -p $(DESTDIR)$(SHAREDIR)
+$(DESTDIR)$(INCLUDEDIR):
+	@echo '  [DIR]   $(INCLUDEDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(INCLUDEDIR)
 subdirs:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)"); done
+	$(Q)for i in src/lib src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)"); done
 
 install: subdirs.install
 
 subdirs.install:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" install); done
+	$(Q)for i in src/lib src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
 
 clean:
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" clean); done
+	$(Q)for i in src/lib src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" clean); done
 
 distclean: clean
-	$(Q)for i in src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" distclean); done
+	$(Q)for i in src/lib src; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" distclean); done
 
 dist: dist-gz dist-xz dist-bz2
 	$(Q)rm -- $(PACKAGE)-$(VERSION)
@@ -53,6 +57,8 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/package.yaml \
+		$(PACKAGE)-$(VERSION)/src/lib/shell.c \
+		$(PACKAGE)-$(VERSION)/src/lib/ui.c \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
 		$(PACKAGE)-$(VERSION)/src/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/assemble.c \
@@ -63,11 +69,10 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/main.c \
 		$(PACKAGE)-$(VERSION)/src/modules.c \
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
-		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -75,21 +80,20 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/extraction.h \
 		$(PACKAGE)-$(VERSION)/src/modules.h \
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
-		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
 		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h
 
 dist-xz: $(PACKAGE)-$(VERSION).tar.xz
 $(PACKAGE)-$(VERSION).tar.xz: distdir
@@ -98,6 +102,8 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/package.yaml \
+		$(PACKAGE)-$(VERSION)/src/lib/shell.c \
+		$(PACKAGE)-$(VERSION)/src/lib/ui.c \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
 		$(PACKAGE)-$(VERSION)/src/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/assemble.c \
@@ -108,11 +114,10 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/main.c \
 		$(PACKAGE)-$(VERSION)/src/modules.c \
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
-		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -120,21 +125,20 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/extraction.h \
 		$(PACKAGE)-$(VERSION)/src/modules.h \
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
-		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
 		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h
 
 dist-bz2: $(PACKAGE)-$(VERSION).tar.bz2
 $(PACKAGE)-$(VERSION).tar.bz2: distdir
@@ -143,6 +147,8 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/project.zsh \
 		$(PACKAGE)-$(VERSION)/package.yaml \
+		$(PACKAGE)-$(VERSION)/src/lib/shell.c \
+		$(PACKAGE)-$(VERSION)/src/lib/ui.c \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
 		$(PACKAGE)-$(VERSION)/src/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/assemble.c \
@@ -153,11 +159,10 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/main.c \
 		$(PACKAGE)-$(VERSION)/src/modules.c \
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
-		$(PACKAGE)-$(VERSION)/src/ui.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/include/mpkgmk_private.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
 		$(PACKAGE)-$(VERSION)/src/build.h \
 		$(PACKAGE)-$(VERSION)/src/configuration.h \
@@ -165,21 +170,20 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/extraction.h \
 		$(PACKAGE)-$(VERSION)/src/modules.h \
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
-		$(PACKAGE)-$(VERSION)/src/ui.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
 		$(PACKAGE)-$(VERSION)/src/modules/archive.c \
 		$(PACKAGE)-$(VERSION)/src/modules/lua.c \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk.h \
-		$(PACKAGE)-$(VERSION)/src/modules/../mpkgmk_private.h
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk.h \
+		$(PACKAGE)-$(VERSION)/src/modules/../include/mpkgmk_private.h
 
 .PHONY: all subdirs clean distclean dist install uninstall
 

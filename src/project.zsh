@@ -2,18 +2,19 @@
 targets=( mpkgmk )
 
 type[mpkgmk]="binary"
-sources[mpkgmk]="assemble.c build.c configuration.c download.c extraction.c main.c modules.c recipe.c ui.c workdir.c"
+sources[mpkgmk]="assemble.c build.c configuration.c download.c extraction.c main.c modules.c recipe.c workdir.c"
 cflags[mpkgmk]='-DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\"'
-ldflags[mpkgmk]="-ldl -lyaml"
-depends[mpkgmk]="error.h mpkgmk.h mpkgmk_private.h"
+ldflags[mpkgmk]="-ldl -lyaml -lmpkgmk"
+depends[mpkgmk]="error.h include/mpkgmk.h include/mpkgmk_private.h"
 
-subdirs=(modules)
+subdirs=(modules include)
 
 dist=(
 	Makefile project.zsh
 )
 
 for target in ${targets[@]}; do
-	cflags[$target]+=" -I."
+	cflags[$target]+=" -Iinclude"
+	ldflags[$target]+=" -Llib"
 done
 

@@ -3,7 +3,6 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "../ui.c"
 #include <mpkgmk_private.h>
 
 int

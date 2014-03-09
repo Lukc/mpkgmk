@@ -98,5 +98,15 @@ typedef struct MpkgmkModule {
 	MpkgmkModuleOnExitFunction on_exit;
 } MpkgmkModule;
 
+/*
+ * Provided API
+ */
+
+int mpkgmk_shell(char*);
+
+void mpkgmk_info(char*, ...);
+void mpkgmk_warning(char*, ...);
+void mpkgmk_error(char*, ...);
+
 #endif
 

@@ -118,6 +118,7 @@ function main {
 		BINDIR '$(PREFIX)/bin'
 		LIBDIR '$(PREFIX)/lib'
 		SHAREDIR '$(PREFIX)/share'
+		INCLUDEDIR '$(PREFIX)/include'
 	)
 
 	if [[ -f project.zsh && -r project.zsh ]]; then

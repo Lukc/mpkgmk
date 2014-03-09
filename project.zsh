@@ -3,6 +3,7 @@ package=mpkgmk
 version=0.0.1
 
 subdirs=(
+	src/lib
 	src
 )
 dist=(

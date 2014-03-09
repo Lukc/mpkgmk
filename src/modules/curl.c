@@ -4,7 +4,6 @@
 #include <string.h>
 #include <curl/curl.h>
 
-#include "../ui.c"
 #include <mpkgmk_private.h>
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {

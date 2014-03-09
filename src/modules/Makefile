@@ -2,6 +2,7 @@ PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
 SHAREDIR := $(PREFIX)/share
+INCLUDEDIR := $(PREFIX)/include
 
 CFLAGS := -O0 -g -Wall -Wextra -D_BSD_SOURCE -Wno-unused-parameter
 LDFLAGS := 
@@ -10,14 +11,14 @@ Q := @
 
 all:  archive.so curl.so lua.so on_load.lua
 
-archive.so: archive.o  ../mpkgmk.h ../mpkgmk_private.h
+archive.so: archive.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    archive.so'
-	$(Q)$(CC) -o archive.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -larchive archive.o
+	$(Q)$(CC) -o archive.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -larchive -L../lib archive.o
 
 
 archive.o: archive.c 
 	@echo '  [CC]    archive.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c archive.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I../include -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c archive.c
 
 archive.o.clean:
 	@echo '  [RM]    archive.o'
@@ -31,14 +32,14 @@ archive.so.clean:
 	@echo '  [RM]    archive.so'
 	$(Q)rm -f archive.so
 
-curl.so: curl.o  ../mpkgmk.h ../mpkgmk_private.h
+curl.so: curl.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    curl.so'
-	$(Q)$(CC) -o curl.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -lcurl curl.o
+	$(Q)$(CC) -o curl.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -lcurl -L../lib curl.o
 
 
 curl.o: curl.c 
 	@echo '  [CC]    curl.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c curl.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I../include -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c curl.c
 
 curl.o.clean:
 	@echo '  [RM]    curl.o'
@@ -52,14 +53,14 @@ curl.so.clean:
 	@echo '  [RM]    curl.so'
 	$(Q)rm -f curl.so
 
-lua.so: lua.o  ../mpkgmk.h ../mpkgmk_private.h
+lua.so: lua.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    lua.so'
-	$(Q)$(CC) -o lua.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -llua lua.o
+	$(Q)$(CC) -o lua.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -llua -L../lib lua.o
 
 
 lua.o: lua.c 
 	@echo '  [CC]    lua.o'
-	$(Q)$(CC) -fPIC $(CFLAGS)  -I.. -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c lua.c
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I../include -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c lua.c
 
 lua.o.clean:
 	@echo '  [RM]    lua.o'
@@ -103,10 +104,13 @@ $(DESTDIR)$(LIBDIR):
 $(DESTDIR)$(SHAREDIR):
 	@echo '  [DIR]   $(SHAREDIR)'
 	$(Q)mkdir -p $(DESTDIR)$(SHAREDIR)
+$(DESTDIR)$(INCLUDEDIR):
+	@echo '  [DIR]   $(INCLUDEDIR)'
+	$(Q)mkdir -p $(DESTDIR)$(INCLUDEDIR)
 install: subdirs.install archive.so.install curl.so.install lua.so.install on_load.lua.install
 
 subdirs.install:
-	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" install); done
+	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
 
 clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean lua.so.clean lua.o.clean on_load.lua.clean
 

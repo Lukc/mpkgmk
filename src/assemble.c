@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "assemble.h"
-#include "ui.h"
 #include "error.h"
 
 void

@@ -8,7 +8,7 @@
  */
 
 void
-info(const char *format, ...) {
+mpkgmk_info(const char *format, ...) {
 	va_list l;
 	va_start(l, format);
 
@@ -21,7 +21,7 @@ info(const char *format, ...) {
 
 #ifdef DEBUG
 void
-debug(const char *format, ...) {
+mpkgmk_debug(const char *format, ...) {
 	va_list l;
 	va_start(l, format);
 
@@ -34,7 +34,7 @@ debug(const char *format, ...) {
 #endif
 
 void
-warning(const char *format, ...) {
+mpkgmk_warning(const char *format, ...) {
 	va_list l;
 	va_start(l, format);
 
@@ -46,7 +46,7 @@ warning(const char *format, ...) {
 }
 
 void
-error(const char *format, ...) {
+mpkgmk_error(const char *format, ...) {
 	va_list l;
 	va_start(l, format);
 

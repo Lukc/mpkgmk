@@ -28,10 +28,11 @@ dist=(
 )
 
 for i in ${targets[@]}; do
-	cflags[${i}]=' -I..'
+	cflags[${i}]=' -I../include'
 	cflags[${i}]+=' -DLIBDIR=\"$(LIBDIR)/mpkgmk\"'
 	cflags[${i}]+=' -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\"'
+	ldflags[${i}]+=' -L../lib'
 
-	depends[${i}]+=" ../mpkgmk.h ../mpkgmk_private.h"
+	depends[${i}]+=" ../include/mpkgmk.h ../include/mpkgmk_private.h"
 done
 
