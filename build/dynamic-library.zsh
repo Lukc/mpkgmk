@@ -31,3 +31,12 @@ function dynamic-library.install {
 	write "\t${Q}install -m755 $target \$(DESTDIR)${install}/$target"
 	write
 }
+
+function dynamic-library.uninstall {
+	# Add a add-symlinks option?
+	local install="${install[$target]:-\$(LIBDIR)}"
+	write "${target}.uninstall:"
+	write "\t@echo '$(RM ${install}/${target})'"
+	write "\t${Q}rm -f '\$(DESTDIR)${install}/${target}'"
+	write
+}

@@ -1,3 +1,6 @@
+PACKAGE = 'mpkgmk'
+VERSION = '0.0.1'
+
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
@@ -20,6 +23,10 @@ mpkgmk.h.install: mpkgmk.h
 
 mpkgmk.h.clean:
 
+mpkgmk.h.uninstall:
+	@echo '  [RM]    $(INCLUDEDIR)/mpkgmk.h'
+	$(Q)rm -f '$(DESTDIR)$(INCLUDEDIR)/mpkgmk.h'
+
 mpkgmk_private.h:
 	@echo '  [  ]    mpkgmk_private.h'
 
@@ -28,6 +35,10 @@ mpkgmk_private.h.install: mpkgmk_private.h
 	$(Q)install -m0755 mpkgmk_private.h $(DESTDIR)$(INCLUDEDIR)/mpkgmk_private.h
 
 mpkgmk_private.h.clean:
+
+mpkgmk_private.h.uninstall:
+	@echo '  [RM]    $(INCLUDEDIR)/mpkgmk_private.h'
+	$(Q)rm -f '$(DESTDIR)$(INCLUDEDIR)/mpkgmk_private.h'
 
 $(DESTDIR)$(PREFIX):
 	@echo '  [DIR]   $(PREFIX)'
@@ -48,6 +59,11 @@ install: subdirs.install mpkgmk.h.install mpkgmk_private.h.install
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
+
+uninstall: subdirs.uninstall mpkgmk.h.uninstall mpkgmk_private.h.uninstall
+
+subdirs.uninstall:
+	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
 clean: mpkgmk.h.clean mpkgmk_private.h.clean
 

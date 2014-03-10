@@ -30,3 +30,11 @@ function binary.install {
 	write
 }
 
+function binary.uninstall {
+	local install="${install[$target]:-\$(BINDIR)}"
+	write "${target}.uninstall:"
+	write "\t@echo '$(RM ${install}/${target})'"
+	write "\t${Q}rm -f '\$(DESTDIR)${install}/${target}'"
+	write
+}
+

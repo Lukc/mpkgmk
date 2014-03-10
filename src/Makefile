@@ -1,3 +1,6 @@
+PACKAGE = 'mpkgmk'
+VERSION = '0.0.1'
+
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
@@ -95,6 +98,10 @@ mpkgmk.clean:
 	@echo '  [RM]    mpkgmk'
 	$(Q)rm -f mpkgmk
 
+mpkgmk.uninstall:
+	@echo '  [RM]    $(BINDIR)/mpkgmk'
+	$(Q)rm -f '$(DESTDIR)$(BINDIR)/mpkgmk'
+
 $(DESTDIR)$(PREFIX):
 	@echo '  [DIR]   $(PREFIX)'
 	$(Q)mkdir -p $(DESTDIR)$(PREFIX)
@@ -117,6 +124,11 @@ install: subdirs.install mpkgmk.install
 
 subdirs.install:
 	$(Q)for i in modules include; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
+
+uninstall: subdirs.uninstall mpkgmk.uninstall
+
+subdirs.uninstall:
+	$(Q)for i in modules include; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
 clean: mpkgmk.clean assemble.o.clean build.o.clean configuration.o.clean download.o.clean extraction.o.clean main.o.clean modules.o.clean recipe.o.clean workdir.o.clean
 	$(Q)for i in modules include; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" clean); done

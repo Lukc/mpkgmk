@@ -42,6 +42,10 @@ function IN {
 	echo "${fg_bold[red]}  [IN]    ${fg_bold[white]}$@${reset_color}"
 }
 
+function LN {
+	echo "${fg_bold[yellow]}  [LN]    ${fg_bold[white]}$@${reset_color}"
+}
+
 function RM {
 	echo "${fg_bold[white]}  [RM]    ${fg_bold[white]}$@${reset_color}"
 }
@@ -131,6 +135,8 @@ function main {
 	: > $Makefile
 
 	if [[ -n "$package" && -n "$version" ]]; then
+		export package version
+
 		write "PACKAGE = '$package'"
 		write "VERSION = '$version'"
 		write
@@ -158,6 +164,7 @@ function main {
 		(
 			typeset -a src
 			src=($(echo ${sources[$target]}))
+			local installdir="${install[$target]}"
 
 			if exists "${type[$target]}.build"; then
 				${type[$target]}.build
@@ -169,7 +176,6 @@ function main {
 			if exists "${type[$target]}.install"; then
 				${type[$target]}.install
 			else
-				local installdir="${install[$target]}"
 				if [[ -z "${installdir}" ]]; then
 					error "No install[${type[${target}]}] and no default installation directory."
 					error "Your “install” rule will be broken!"
@@ -187,6 +193,15 @@ function main {
 				write "${target}.clean:"
 				write "\t@echo '$(RM ${target})'"
 				write "\t${Q}rm -f ${target}"
+				write
+			fi
+
+			if exists "${type[$target]}.uninstall"; then
+				${type[$target]}.uninstall
+			else
+				write "${target}.uninstall:"
+				write "\t@echo '$(RM "${installdir}/${target}")'"
+				write "\t${Q}rm -f '\$(DESTDIR)${installdir}/${target}'"
 				write
 			fi
 		)
@@ -218,6 +233,16 @@ function main {
 
 	write "subdirs.install:"
 	subdirs install
+	write
+
+	write -n "uninstall: subdirs.uninstall"
+	for target in ${targets[@]}; do
+		write -n " ${target}.uninstall"
+	done
+	write "\n"
+
+	write "subdirs.uninstall:"
+	subdirs uninstall
 	write
 
 	write -n "clean:"
@@ -272,7 +297,7 @@ function main {
 	for i in ${subdirs[@]}; do
 		(
 			cd $i
-			unset package version subdirs targets dist sources ldflags depends install type
+			unset subdirs targets dist sources ldflags depends install type
 			typeset -A sources ldflags depends install type
 			typeset -a targets dist
 			root=false main $i

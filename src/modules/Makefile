@@ -1,3 +1,6 @@
+PACKAGE = 'mpkgmk'
+VERSION = '0.0.1'
+
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
@@ -32,6 +35,10 @@ archive.so.clean:
 	@echo '  [RM]    archive.so'
 	$(Q)rm -f archive.so
 
+archive.so.uninstall:
+	@echo '  [RM]    $(LIBDIR)/mpkgmk/archive.so'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/mpkgmk/archive.so'
+
 curl.so: curl.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    curl.so'
 	$(Q)$(CC) -o curl.so -fPIC -shared $(CFLAGS) $(LDFLAGS) -lcurl -L../lib curl.o
@@ -52,6 +59,10 @@ curl.so.install: curl.so $(DESTDIR)$(LIBDIR)/mpkgmk
 curl.so.clean:
 	@echo '  [RM]    curl.so'
 	$(Q)rm -f curl.so
+
+curl.so.uninstall:
+	@echo '  [RM]    $(LIBDIR)/mpkgmk/curl.so'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/mpkgmk/curl.so'
 
 lua.so: lua.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    lua.so'
@@ -74,6 +85,10 @@ lua.so.clean:
 	@echo '  [RM]    lua.so'
 	$(Q)rm -f lua.so
 
+lua.so.uninstall:
+	@echo '  [RM]    $(LIBDIR)/mpkgmk/lua.so'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/mpkgmk/lua.so'
+
 on_load.lua:
 	@echo '  [  ]    on_load.lua'
 
@@ -82,6 +97,10 @@ on_load.lua.install: $(DESTDIR)$(SHAREDIR)/mpkgmk
 	$(Q)install -m755 on_load.lua $(DESTDIR)$(SHAREDIR)/mpkgmk/on_load.lua
 
 on_load.lua.clean:
+
+on_load.lua.uninstall:
+	@echo '  [RM]    $(SHAREDIR)/mpkgmk/on_load.lua'
+	$(Q)rm -f '$(DESTDIR)$(SHAREDIR)/mpkgmk/on_load.lua'
 
 $(DESTDIR)$(LIBDIR)/mpkgmk:
 	@echo '  [DIR]   $(LIBDIR)/mpkgmk'
@@ -111,6 +130,11 @@ install: subdirs.install archive.so.install curl.so.install lua.so.install on_lo
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
+
+uninstall: subdirs.uninstall archive.so.uninstall curl.so.uninstall lua.so.uninstall on_load.lua.uninstall
+
+subdirs.uninstall:
+	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
 clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean lua.so.clean lua.o.clean on_load.lua.clean
 

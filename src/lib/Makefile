@@ -1,3 +1,6 @@
+PACKAGE = 'mpkgmk'
+VERSION = '0.0.1'
+
 PREFIX := /usr/local
 BINDIR := $(PREFIX)/bin
 LIBDIR := $(PREFIX)/lib
@@ -34,15 +37,45 @@ ui.o.clean:
 	@echo '  [RM]    ui.o'
 	$(Q)rm -f ui.o
 
-libmpkgmk.install: libmpkgmk.so.install
+libmpkgmk.install:  libmpkgmk.so.0.0.install libmpkgmk.so.0.install libmpkgmk.so.install
 
-libmpkgmk.so.install: libmpkgmk.so $(DESTDIR)$(LIBDIR)
-	@echo '  [IN]    $(LIBDIR)/libmpkgmk.so'
-	$(Q)install -m755 libmpkgmk.so $(DESTDIR)$(LIBDIR)/libmpkgmk.so
+libmpkgmk.so.0.0.1.install: libmpkgmk.so $(DESTDIR)$(LIBDIR)
+	@echo '  [IN]    $(LIBDIR)/libmpkgmk.so.0.0.1'
+	$(Q)install -m755 libmpkgmk.so $(DESTDIR)$(LIBDIR)/libmpkgmk.so.0.0.1
+
+libmpkgmk.so.0.0.install: libmpkgmk.so.0.0.1.install
+	@echo '  [LN]    $(LIBDIR)/libmpkgmk.so.0.0'
+	$(Q)ln -sf '$(LIBDIR)/libmpkgmk.so.0.0.1' '$(DESTDIR)/$(LIBDIR)/libmpkgmk.so.0.0'
+
+libmpkgmk.so.0.install: libmpkgmk.so.0.0.1.install
+	@echo '  [LN]    $(LIBDIR)/libmpkgmk.so.0'
+	$(Q)ln -sf '$(LIBDIR)/libmpkgmk.so.0.0.1' '$(DESTDIR)/$(LIBDIR)/libmpkgmk.so.0'
+
+libmpkgmk.so.install: libmpkgmk.so.0.0.1.install
+	@echo '  [LN]    $(LIBDIR)/libmpkgmk.so'
+	$(Q)ln -sf '$(LIBDIR)/libmpkgmk.so.0.0.1' '$(DESTDIR)/$(LIBDIR)/libmpkgmk.so'
 
 libmpkgmk.clean:
 	@echo '  [RM]    libmpkgmk'
 	$(Q)rm -f libmpkgmk
+
+libmpkgmk.uninstall:  libmpkgmk.so.uninstall libmpkgmk.so.0.uninstall libmpkgmk.so.0.0.uninstall libmpkgmk.so.0.0.1.uninstall
+
+libmpkgmk.so.uninstall:
+	@echo '  [RM]    $(LIBDIR)/libmpkgmk.so'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/libmpkgmk.so'
+
+libmpkgmk.so.0.uninstall:
+	@echo '  [RM]    $(LIBDIR)/libmpkgmk.so.0'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/libmpkgmk.so.0'
+
+libmpkgmk.so.0.0.uninstall:
+	@echo '  [RM]    $(LIBDIR)/libmpkgmk.so.0.0'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/libmpkgmk.so.0.0'
+
+libmpkgmk.so.0.0.1.uninstall:
+	@echo '  [RM]    $(LIBDIR)/libmpkgmk.so.0.0.1'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/libmpkgmk.so.0.0.1'
 
 $(DESTDIR)$(PREFIX):
 	@echo '  [DIR]   $(PREFIX)'
@@ -63,6 +96,11 @@ install: subdirs.install libmpkgmk.install
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
+
+uninstall: subdirs.uninstall libmpkgmk.uninstall
+
+subdirs.uninstall:
+	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
 clean: libmpkgmk.clean shell.o.clean ui.o.clean
 

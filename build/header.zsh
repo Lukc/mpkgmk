@@ -18,3 +18,11 @@ function header.install {
 	write
 }
 
+function header.uninstall {
+	local install="${install[$target]:-\$(INCLUDEDIR)}"
+	write "${target}.uninstall:"
+	write "\t@echo '$(RM ${install}/${target})'"
+	write "\t${Q}rm -f '\$(DESTDIR)${install}/${target}'"
+	write
+}
+
