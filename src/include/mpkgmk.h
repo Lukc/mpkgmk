@@ -64,6 +64,7 @@ typedef struct MpkgmkConfiguration {
 
 	char *sources_directory;
 	char *working_directory;
+	char *packages_directory;
 	char *assembler;
 } MpkgmkConfiguration;
 

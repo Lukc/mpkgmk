@@ -36,12 +36,15 @@ int main() {
 		exit(1);
 	}
 
-	download(recipe, modules, configuration, sources);
+	if (sources) {
+		download(recipe, modules, configuration, sources);
 
-	work_dir = configuration->working_directory;
-	extract(recipe, modules, configuration, sources);
+		work_dir = configuration->working_directory;
+		create_work_dir(work_dir);
 
-	create_work_dir(work_dir);
+		extract(recipe, modules, configuration, sources);
+	}
+
 	chdir(work_dir);
 
 	build(recipe, modules, configuration);

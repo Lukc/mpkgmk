@@ -11,6 +11,8 @@
 void
 build(RecipeElement *recipe, Module **modules, Configuration *configuration) {
 	int i, ret, was_built, stage;
+	char *code;
+	RecipeElement *elem;
 	Module *module;
 
 
@@ -24,58 +26,62 @@ build(RecipeElement *recipe, Module **modules, Configuration *configuration) {
 	while (stage <= 3) {
 		i = 0;
 		was_built = 0;
+		code = NULL;
+		elem = NULL;
 
-		while (modules[i]) {
-			module = modules[i];
-			if (module->configure) {
-				if (stage == 1)
-					ret = module->configure(recipe, configuration);
-				else if (stage == 2)
-					ret = module->build(recipe, configuration);
-				else if (stage == 3)
-					ret = module->install(recipe, configuration);
+		if (stage == 1)
+			elem = recipe_alist_get(recipe->data.alist, "configure");
+		else if (stage == 2)
+			elem = recipe_alist_get(recipe->data.alist, "build");
+		else if (stage == 3)
+			elem = recipe_alist_get(recipe->data.alist, "install");
 
-				if (ret == MODULE_SUCCEEDED) {
-					was_built = 1;
-					break;
-				} else if (ret == MODULE_FAILED) {
-					if (stage == 1)
-						error("Configuration failed.");	
-					else if (stage == 2) {
-						error("Building failed.");	
-						exit(ERROR_BUILDING_FAILED);
-					} else if (stage == 3) {
-						error("Installation failed.");	
-						exit(ERROR_BUILDING_FAILED);
-					}
-				} else if (ret == MODULE_USELESS) {
-					/* ignore */
-				} else {
-					error("Broken module.");
-					exit(ERROR_BROKEN_MODULE);
-				}
+		if (elem)
+			code = elem->data.string;
+
+		if (code) {
+			if (shell(code) == 0)
+				was_built = 1;
+			else {
+				error("An error occured while building the software.");
+
+				exit(ERROR_BUILDING_FAILED);
 			}
-
-			i++;
 		}
 
 		if (!was_built) {
-			char *code = NULL;
-			if (stage == 1)
-				code = recipe_alist_get(recipe->data.alist, "configure")->data.string;
-			else if (stage == 2)
-				code = recipe_alist_get(recipe->data.alist, "build")->data.string;
-			else if (stage == 3)
-				code = recipe_alist_get(recipe->data.alist, "install")->data.string;
+			while (modules[i]) {
+				module = modules[i];
+				if (module->configure) {
+					if (stage == 1)
+						ret = module->configure(recipe, configuration);
+					else if (stage == 2)
+						ret = module->build(recipe, configuration);
+					else if (stage == 3)
+						ret = module->install(recipe, configuration);
 
-			if (code) {
-				if (shell(code) == 0)
-					was_built = 1;
-				else {
-					error("An error occured while building the software.");
-
-					exit(ERROR_BUILDING_FAILED);
+					if (ret == MODULE_SUCCEEDED) {
+						was_built = 1;
+						break;
+					} else if (ret == MODULE_FAILED) {
+						if (stage == 1)
+							error("Configuration failed.");	
+						else if (stage == 2) {
+							error("Building failed.");	
+							exit(ERROR_BUILDING_FAILED);
+						} else if (stage == 3) {
+							error("Installation failed.");	
+							exit(ERROR_BUILDING_FAILED);
+						}
+					} else if (ret == MODULE_USELESS) {
+						/* ignore */
+					} else {
+						error("Broken module.");
+						exit(ERROR_BROKEN_MODULE);
+					}
 				}
+
+				i++;
 			}
 		}
 

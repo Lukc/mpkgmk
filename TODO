@@ -1,32 +1,34 @@
 
 Core:
-	- Recipe reading… Yes, seriously. There’s currently none.
-	  package.yamls are the priority, here.
-	- Configuration reading. About as important as recipe-reading.
-	  Maybe a mpkgmk.yaml or something would do the trick.
-	- Make the configuration a RecipeElement (or whatnot) tree. We’ll need
-	  many more options and modules might not want to (or rather I don’t want
-	  them to) add stuff to our current Configuration structure.
+	- Configuration reading. None is currently being read.
+	- Command Line Interface. None is available at this point.
+	- Modules need to receive a simpler structure about the package data, not
+	  a whole recipe.
+	- Be more careful about the use of parts of the recipe that might not be
+	  here.
 
-	- MASSIVE CLEANING (stuff not freed, directories not removed, etc.)
-	- Also, there is no configurable packages_directory.
+	- Cleaning. Memory leaks and other similar stuff is frequent.
+
+Parsing:
+	- Total rewrite needed.
+	- Automated variables substitutions should occur.
+	- “Empty” fields (ie. whitespace strings) should not be kept in memory.
+	- A Version structure would be better for our versions, but would need
+	  to be parsed and an API would be required to work with them.
 
 modules:
 	- Lua
-	- zsh (doesn’t “need” to be done, but we should at least ask for
-	  the possibility of using it)
-	- libarchive
-	- libcurl
+	- libarchive + pkgutils
+	- libcurl (could be better, with .part files)
 	- assemblers
-		- libarchive/CRUX is a priority (it’s simple and it makes a good example)
-		- pacmen’s. It can be based on the CRUX module and remains pretty simple.
+		- libarchive/CRUX/pkgutils
+		- pacman, pacman-g2
 		- dpkg
 		- rpm
-		note on assemblers: they could be done in Lua or whatnot and not be built ins.
-	- Recipe readers (package.yaml, package.json, …)
+	- Recipe readers (package.yaml, package.json, …), plus the infrastructure
+	  for them.
 
 build system:
-	- use one
-	- Make it possible to not build modules, although libarchive and
-	  libcurl would pretty much remain mandatory, or strongly recommended.
+	- Allow disabling modules.
+	- Deduplicate the list of files to add in tarballs.
 

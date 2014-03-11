@@ -158,7 +158,9 @@ get_sources(RecipeElement *recipe) {
 	sources = (Source**) NULL;
 
 	element = recipe_alist_get(recipe->data.alist, "source");
-	if (element->type == RECIPE_STRING) {
+	if (!element) {
+		return NULL;
+	} if (element->type == RECIPE_STRING) {
 		sources = (Source**) malloc(sizeof(Source*) * 2);
 		sources[0] = string_to_source(element->data.string);
 		sources[1] = NULL;

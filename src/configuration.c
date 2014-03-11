@@ -15,7 +15,8 @@ load_configuration(RecipeElement *recipe) {
 	configuration->download = 1;
 
 	configuration->sources_directory = ".";
-	configuration->assembler = "test";
+	configuration->assembler = "pkgutils";
+	configuration->packages_directory = ".";
 
 	name = recipe_alist_get(recipe->data.alist, "name")->data.string;
 	configuration->working_directory = (char*) malloc(sizeof(char) * (
