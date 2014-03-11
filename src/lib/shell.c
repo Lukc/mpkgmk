@@ -19,7 +19,7 @@ mpkgmk_shell(char *code) {
 		close(pipefd[1]);
 
 		dup2(pipefd[0], 0);
-		execl("/bin/sh", "sh", NULL);
+		execl("/bin/sh", "sh", "-e", "-x", NULL);
 		return -2;
 	} else if (pid == -1) {
 		return -3;
@@ -28,7 +28,6 @@ mpkgmk_shell(char *code) {
 
 		close(pipefd[0]);
 
-		write(pipefd[1], "set -x -e\n", strlen("set -x -e\n"));
 		write(pipefd[1], code, strlen(code));
 		close(pipefd[1]);
 
