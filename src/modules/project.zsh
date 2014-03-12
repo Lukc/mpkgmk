@@ -1,4 +1,4 @@
-targets=(archive.so curl.so lua.so on_load.lua)
+targets=(archive.so curl.so lua.so pkgutils.so on_load.lua)
 directories=('$(LIBDIR)/mpkgmk' '$(SHAREDIR)/mpkgmk'{,/lua})
 
 install[archive.so]='$(LIBDIR)/mpkgmk'
@@ -16,9 +16,9 @@ sources[lua.so]=lua.c
 ldflags[lua.so]="-llua"
 type[lua.so]=dynamic-library
 
-#install[test.so]='$(LIBDIR)/mpkgmk'
-#sources[test.so]=test.c
-#type[test.so]=dynamic-library
+install[pkgutils.so]='$(LIBDIR)/mpkgmk'
+sources[pkgutils.so]=pkgutils.c
+type[pkgutils.so]=dynamic-library
 
 install[on_load.lua]='$(SHAREDIR)/mpkgmk'
 type[on_load.lua]=script

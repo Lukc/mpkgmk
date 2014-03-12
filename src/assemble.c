@@ -5,7 +5,7 @@
 #include "error.h"
 
 void
-assemble(RecipeElement *recipe, Module **modules, Configuration *configuration) {
+assemble(RecipeElement *recipe, Package *packages, Module **modules, Configuration *configuration) {
 	int i, ret;
 	Module *module;
 
@@ -13,7 +13,7 @@ assemble(RecipeElement *recipe, Module **modules, Configuration *configuration) 
 	while (modules[i]) {
 		module = modules[i];
 		if (module->assembler) {
-			ret = module->assembler(recipe, configuration);
+			ret = module->assembler(recipe, packages, configuration);
 
 			if (ret == MODULE_FAILED) {
 				error("Oops! Assembling failed. :(((");

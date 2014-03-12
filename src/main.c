@@ -9,14 +9,17 @@
 #include "download.h"
 #include "extraction.h"
 #include "configuration.h"
+#include "package.h"
 #include "build.h"
 #include "assemble.h"
+#include "error.h"
 
 int main() {
 	RecipeElement *recipe;
 	Module **modules;
 	Configuration *configuration;
 	Source **sources;
+	Package *packages;
 	char *work_dir;
 
 	recipe = load_recipe("./package.yaml");
@@ -24,6 +27,7 @@ int main() {
 	modules = load_modules();
 	configuration = load_configuration(recipe);
 	sources = get_sources(recipe);
+	packages = recipe_to_packages(recipe);
 
 	/*
 	 * TODO HERE:
@@ -36,22 +40,25 @@ int main() {
 		exit(1);
 	}
 
+	work_dir = configuration->working_directory;
+	create_work_dir(work_dir);
+
 	if (sources) {
 		download(recipe, modules, configuration, sources);
-
-		work_dir = configuration->working_directory;
-		create_work_dir(work_dir);
 
 		extract(recipe, modules, configuration, sources);
 	}
 
-	chdir(work_dir);
+	if (chdir(work_dir) == -1) {
+		perror("chdir");
+		exit(ERROR_BUILDING_FAILED);
+	}
 
 	build(recipe, modules, configuration);
 
 	/* More stuff will have to be done about this once splits will
 	 * become a priority. */
-	assemble(recipe, modules, configuration);
+	assemble(recipe, packages, modules, configuration);
 
 	/* FIXME: Success is assumed, for now */
 	modules_on_exit(configuration, modules, 1);

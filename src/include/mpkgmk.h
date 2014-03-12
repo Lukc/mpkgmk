@@ -17,6 +17,7 @@ typedef struct MpkgmkRecipeAList {
 	struct MpkgmkRecipeAList *next;
 } MpkgmkRecipeAList;
 
+/* FIXME: Redo it completely. */
 typedef struct MpkgmkVersion {
 	/* Integer or string. */
 	int type;
@@ -27,6 +28,7 @@ typedef struct MpkgmkVersion {
 	} value;
 
 	struct MpkgmkVersion *next;
+	char *original_string;
 } MpkgmkVersion;
 
 typedef struct MpkgmkSource {
@@ -47,7 +49,7 @@ enum MPKGMK_RECIPE_TYPES {
 typedef struct MpkgmkRecipe {
 	int type;
 	union {
-		int *integer; /* Might be reused for bools. */
+		int integer; /* Might be reused for bools. */
 		struct MpkgmkRecipeList *list;
 		struct MpkgmkRecipeAList *alist;
 		char *string;
@@ -69,6 +71,16 @@ typedef struct MpkgmkConfiguration {
 } MpkgmkConfiguration;
 
 /*
+ * PACKAGES
+ */
+
+typedef struct MpkgmkPackage {
+	char *name;
+	char *version;
+	int release;
+} MpkgmkPackage;
+
+/*
  * MODULES
  */
 
@@ -77,6 +89,7 @@ typedef struct MpkgmkConfiguration {
 #define MODULE_SUCCEEDED 1
 
 typedef int (*MpkgmkModuleFunction)(MpkgmkRecipe*, MpkgmkConfiguration*);
+typedef int (*MpkgmkModuleAssemblerFunction)(MpkgmkRecipe*, MpkgmkPackage*, MpkgmkConfiguration*);
 typedef int (*MpkgmkModuleSourceFunction)(MpkgmkSource*, MpkgmkConfiguration*);
 typedef int (*MpkgmkModuleOnLoadFunction)(MpkgmkConfiguration*);
 typedef int (*MpkgmkModuleOnExitFunction)(MpkgmkConfiguration*, int);
@@ -94,7 +107,7 @@ typedef struct MpkgmkModule {
 	MpkgmkModuleFunction install;
 
 	/* Packages building. */
-	MpkgmkModuleFunction assembler;
+	MpkgmkModuleAssemblerFunction assembler;
 
 	MpkgmkModuleOnExitFunction on_exit;
 } MpkgmkModule;

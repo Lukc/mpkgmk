@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include <sys/stat.h>
 
@@ -8,6 +9,7 @@
 
 void
 create_work_dir(char *work_dir) {
-	mkdir(work_dir, 0644);
+	if (mkdir(work_dir, 0777) == -1 && errno != EEXIST)
+		perror("mkdir(work_dir)");
 }
 

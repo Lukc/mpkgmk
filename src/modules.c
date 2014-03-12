@@ -68,7 +68,7 @@ load_modules(Configuration *configuration) {
 				module->build =       (ModuleFunction) dlsym(handle, "mpkgmk_build");
 				module->install =     (ModuleFunction) dlsym(handle, "mpkgmk_install");
 
-				module->assembler =   (ModuleFunction) dlsym(handle, "mpkgmk_assembler");
+				module->assembler =   (ModuleAssemblerFunction) dlsym(handle, "mpkgmk_assembler");
 
 				module->on_exit =     (ModuleOnExitFunction) dlsym(handle, "mpkgmk_on_exit");
 

@@ -248,8 +248,13 @@ process_yaml_layer(yaml_parser_t *parser, RecipeElement *data) {
 					alist->key = strdup((char *) event.data.scalar.value);
 				} else {
 					element = (RecipeElement*) malloc(sizeof(RecipeElement));
-					element->type = RECIPE_STRING;
-					element->data.string = strdup((char *) event.data.scalar.value);
+
+					if (!strcmp(alist->key, "release")) {
+						element->data.integer = atoi((char*) event.data.scalar.value);
+					} else {
+						element->type = RECIPE_STRING;
+						element->data.string = strdup((char *) event.data.scalar.value);
+					}
 
 					alist->element = element;
 				}

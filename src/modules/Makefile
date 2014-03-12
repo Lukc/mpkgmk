@@ -12,7 +12,7 @@ LDFLAGS :=
 
 Q := @
 
-all:  archive.so curl.so lua.so on_load.lua
+all:  archive.so curl.so lua.so pkgutils.so on_load.lua
 
 archive.so: archive.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
 	@echo '  [LD]    archive.so'
@@ -89,6 +89,31 @@ lua.so.uninstall:
 	@echo '  [RM]    $(LIBDIR)/mpkgmk/lua.so'
 	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/mpkgmk/lua.so'
 
+pkgutils.so: pkgutils.o  ../include/mpkgmk.h ../include/mpkgmk_private.h
+	@echo '  [LD]    pkgutils.so'
+	$(Q)$(CC) -o pkgutils.so -fPIC -shared $(CFLAGS) $(LDFLAGS)  -L../lib pkgutils.o
+
+
+pkgutils.o: pkgutils.c 
+	@echo '  [CC]    pkgutils.o'
+	$(Q)$(CC) -fPIC $(CFLAGS)  -I../include -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -c pkgutils.c
+
+pkgutils.o.clean:
+	@echo '  [RM]    pkgutils.o'
+	$(Q)rm -f pkgutils.o
+
+pkgutils.so.install: pkgutils.so $(DESTDIR)$(LIBDIR)/mpkgmk
+	@echo '  [IN]    $(LIBDIR)/mpkgmk/pkgutils.so'
+	$(Q)install -m755 pkgutils.so $(DESTDIR)$(LIBDIR)/mpkgmk/pkgutils.so
+
+pkgutils.so.clean:
+	@echo '  [RM]    pkgutils.so'
+	$(Q)rm -f pkgutils.so
+
+pkgutils.so.uninstall:
+	@echo '  [RM]    $(LIBDIR)/mpkgmk/pkgutils.so'
+	$(Q)rm -f '$(DESTDIR)$(LIBDIR)/mpkgmk/pkgutils.so'
+
 on_load.lua:
 	@echo '  [  ]    on_load.lua'
 
@@ -126,17 +151,17 @@ $(DESTDIR)$(SHAREDIR):
 $(DESTDIR)$(INCLUDEDIR):
 	@echo '  [DIR]   $(INCLUDEDIR)'
 	$(Q)mkdir -p $(DESTDIR)$(INCLUDEDIR)
-install: subdirs.install archive.so.install curl.so.install lua.so.install on_load.lua.install
+install: subdirs.install archive.so.install curl.so.install lua.so.install pkgutils.so.install on_load.lua.install
 
 subdirs.install:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" install); done
 
-uninstall: subdirs.uninstall archive.so.uninstall curl.so.uninstall lua.so.uninstall on_load.lua.uninstall
+uninstall: subdirs.uninstall archive.so.uninstall curl.so.uninstall lua.so.uninstall pkgutils.so.uninstall on_load.lua.uninstall
 
 subdirs.uninstall:
 	$(Q)for i in ; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
-clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean lua.so.clean lua.o.clean on_load.lua.clean
+clean: archive.so.clean archive.o.clean curl.so.clean curl.o.clean lua.so.clean lua.o.clean pkgutils.so.clean pkgutils.o.clean on_load.lua.clean
 
 distclean: clean
 

@@ -4,7 +4,7 @@
 
 #include <mpkgmk_private.h>
 
-void assemble(RecipeElement *recipe, Module **modules, Configuration *configuration);
+void assemble(RecipeElement*, Package*, Module**, Configuration*);
 
 #endif
 

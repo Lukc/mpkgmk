@@ -10,6 +10,8 @@
 
 #define Configuration         MpkgmkConfiguration
 
+#define Package               MpkgmkPackage
+
 #define RecipeList            MpkgmkRecipeList
 #define RecipeAList           MpkgmkRecipeAList
 #define Version               MpkgmkVersion
@@ -26,6 +28,7 @@
 
 #define ModuleFunction        MpkgmkModuleFunction
 #define ModuleSourceFunction  MpkgmkModuleSourceFunction
+#define ModuleAssemblerFunction MpkgmkModuleAssemblerFunction
 #define ModuleOnLoadFunction  MpkgmkModuleOnLoadFunction
 #define ModuleOnExitFunction  MpkgmkModuleOnExitFunction
 #define Module                MpkgmkModule

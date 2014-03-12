@@ -1,5 +1,5 @@
+#include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <string.h>
 
 #include <sys/types.h>
@@ -16,6 +16,6 @@ mpkgmk_shell(char *code) {
 	));
 
 	strcpy(str+l, code);
-	system(str);
+	return system(str);
 }
 
