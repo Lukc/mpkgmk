@@ -7,33 +7,15 @@
 
 int
 mpkgmk_shell(char *code) {
-	int pipefd[2];
-	pid_t pid;
+	char *str;
+	int l;
+	l = strlen("set -e -x;");
+	str = strdup("set -e -x;");
+	str = (char*) realloc(str, sizeof(char) * (
+		l + strlen(code) + 1
+	));
 
-	if (pipe(pipefd) != 0) {
-		return -1;
-	}
-
-	pid = fork();
-	if (pid == 0) {
-		close(pipefd[1]);
-
-		dup2(pipefd[0], 0);
-		execl("/bin/sh", "sh", "-e", "-x", NULL);
-		return -2;
-	} else if (pid == -1) {
-		return -3;
-	} else {
-		int status;
-
-		close(pipefd[0]);
-
-		write(pipefd[1], code, strlen(code));
-		close(pipefd[1]);
-
-		waitpid(pid, &status, 0);
-
-		return status;
-	}
+	strcpy(str+l, code);
+	system(str);
 }
 
