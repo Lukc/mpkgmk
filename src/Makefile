@@ -14,7 +14,7 @@ Q := @
 
 all:  mpkgmk subdirs
 
-mpkgmk: assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o error.h include/mpkgmk.h include/mpkgmk_private.h
+mpkgmk: assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o error.h path_max.h include/mpkgmk.h include/mpkgmk_private.h
 	@echo '  [LD]    mpkgmk'
 	$(Q)$(CC) -o mpkgmk $(CFLAGS) $(LDFLAGS) -ldl -lyaml -lmpkgmk -Llib assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o
 
