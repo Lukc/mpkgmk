@@ -1,11 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
-
-/* FIXME: I have no idea what I’m doing. */
-#ifndef PATH_MAX
-#define PATH_MAX _PC_PATH_MAX
-#endif
-
+#include <unistd.h>
+#include "path_max.h"
 #include "ui.h"
 #include "extraction.h"
 #include "error.h"

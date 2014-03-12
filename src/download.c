@@ -2,12 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
-/* FIXME: I have no idea what I’m doing. */
-#ifndef PATH_MAX
-#define PATH_MAX _PC_PATH_MAX
-#endif
-
+#include "path_max.h"
 #include "ui.h"
 #include "recipe.h"
 #include "download.h"
