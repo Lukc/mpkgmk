@@ -97,9 +97,7 @@ function get_distfiles {
 			for file in $(get_distfiles); do
 				local file="${dir}/${file}"
 				while [[ "$file" =~ "\.\./" ]]; do
-					error "${file}"
 					file="${file/[a-z]*\/\.\.\//}"
-					error " -> ${file}"
 				done
 
 				echo "${file}"
