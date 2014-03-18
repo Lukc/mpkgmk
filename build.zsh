@@ -95,7 +95,14 @@ function get_distfiles {
 			cd "$dir"
 			. ./project.zsh
 			for file in $(get_distfiles); do
-				echo "${dir}/${file}"
+				local file="${dir}/${file}"
+				while [[ "$file" =~ "\.\./" ]]; do
+					error "${file}"
+					file="${file/[a-z]*\/\.\.\//}"
+					error " -> ${file}"
+				done
+
+				echo "${file}"
 			done
 		)
 	done
@@ -103,6 +110,24 @@ function get_distfiles {
 
 function exists {
 	[[ "$(whence -w ${1})" != "${1}: none" ]]
+}
+
+function duplicated {
+	local elem="$1"
+	local count=0
+	shift 1
+	local i
+	for i in $@; do
+		if [[ "$elem" == "$i" ]]; then
+			((count++))
+
+			if (( $count > 1 )); then
+				return 0
+			fi
+		fi
+	done
+
+	return 1
 }
 
 for i in build/*.zsh; do
@@ -277,17 +302,27 @@ function main {
 		write "\t"$Q'ln -s -- . $(PACKAGE)-$(VERSION)'
 		write
 
+		typeset -a distfiles
+		distfiles=($(get_distfiles))
+		local i
+
+		for i in {1..${#distfiles[@]}}; do
+			if duplicated "${distfiles[${i}]}" "${distfiles[@]}"; then
+				distfiles[${i}]=
+			fi
+		done
+
 		for i flag in gz z xz J bz2 j; do
 			write "dist-${i}: \$(PACKAGE)-\$(VERSION).tar.$i"
 			write "\$(PACKAGE)-\$(VERSION).tar.$i: distdir"
 			write "\t@echo '$(TAR "\$(PACKAGE)-\$(VERSION).tar.$i")'"
 			write "\t${Q}tar c${flag}f \$(PACKAGE)-\$(VERSION).tar.$i \\"
-			typeset -a distfiles
-			distfiles=($(get_distfiles))
 			for i in {1..${#distfiles}}; do
-				write -n "\t\t\$(PACKAGE)-\$(VERSION)/${distfiles[$i]}"
-				if (( i != ${#distfiles} )); then
-					write " \\"
+				if [[ -n "${distfiles[$i]}" ]]; then
+					write -n "\t\t\$(PACKAGE)-\$(VERSION)/${distfiles[$i]}"
+					if (( i != ${#distfiles} )); then
+						write " \\"
+					fi
 				fi
 			done
 			write "\n"
