@@ -76,6 +76,7 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/package.c \
+		$(PACKAGE)-$(VERSION)/src/opts.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
 		$(PACKAGE)-$(VERSION)/src/path_max.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
@@ -87,6 +88,7 @@ $(PACKAGE)-$(VERSION).tar.gz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/package.h \
+		$(PACKAGE)-$(VERSION)/src/opts.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
@@ -117,6 +119,7 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/package.c \
+		$(PACKAGE)-$(VERSION)/src/opts.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
 		$(PACKAGE)-$(VERSION)/src/path_max.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
@@ -128,6 +131,7 @@ $(PACKAGE)-$(VERSION).tar.xz: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/package.h \
+		$(PACKAGE)-$(VERSION)/src/opts.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \
@@ -158,6 +162,7 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.c \
 		$(PACKAGE)-$(VERSION)/src/workdir.c \
 		$(PACKAGE)-$(VERSION)/src/package.c \
+		$(PACKAGE)-$(VERSION)/src/opts.c \
 		$(PACKAGE)-$(VERSION)/src/error.h \
 		$(PACKAGE)-$(VERSION)/src/path_max.h \
 		$(PACKAGE)-$(VERSION)/src/assemble.h \
@@ -169,6 +174,7 @@ $(PACKAGE)-$(VERSION).tar.bz2: distdir
 		$(PACKAGE)-$(VERSION)/src/recipe.h \
 		$(PACKAGE)-$(VERSION)/src/workdir.h \
 		$(PACKAGE)-$(VERSION)/src/package.h \
+		$(PACKAGE)-$(VERSION)/src/opts.h \
 		$(PACKAGE)-$(VERSION)/src/modules/Makefile \
 		$(PACKAGE)-$(VERSION)/src/modules/project.zsh \
 		$(PACKAGE)-$(VERSION)/src/modules/curl.c \

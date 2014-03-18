@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "ui.h"
+#include "opts.h"
 #include "recipe.h"
 #include "modules.h"
 #include "workdir.h"
@@ -14,7 +15,7 @@
 #include "assemble.h"
 #include "error.h"
 
-int main() {
+int main(int argc, char *argv[]) {
 	RecipeElement *recipe;
 	Module **modules;
 	Configuration *configuration;
@@ -25,7 +26,13 @@ int main() {
 	recipe = load_recipe("./package.yaml");
 
 	modules = load_modules();
+
+	/* FIXME: Configuration should come before the recipe. But it should
+	 *        be processed again once the recipe is available, to 
+	 *        allow stuff like mpkgmk-$name as work dir or whatever */
 	configuration = load_configuration(recipe);
+	parse_options(argc, argv, configuration);
+
 	sources = get_sources(recipe);
 	packages = recipe_to_packages(recipe);
 

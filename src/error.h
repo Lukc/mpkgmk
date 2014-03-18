@@ -6,6 +6,7 @@
  * IMPORTANT NOTICE: Those values are kinda pure random.
  */
 
+#define ERROR_CLI_ERROR 8
 #define ERROR_DOWNLOAD_FAILED 17
 #define ERROR_BUILDING_FAILED 18
 #define ERROR_PACKAGING_FAILED 19

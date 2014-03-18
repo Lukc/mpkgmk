@@ -14,9 +14,9 @@ Q := @
 
 all:  mpkgmk subdirs
 
-mpkgmk: assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o package.o error.h path_max.h include/mpkgmk.h include/mpkgmk_private.h
+mpkgmk: assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o package.o opts.o error.h path_max.h include/mpkgmk.h include/mpkgmk_private.h
 	@echo '  [LD]    mpkgmk'
-	$(Q)$(CC) -o mpkgmk $(CFLAGS) $(LDFLAGS) -ldl -lyaml -lmpkgmk -Llib assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o package.o
+	$(Q)$(CC) -o mpkgmk $(CFLAGS) $(LDFLAGS) -ldl -lyaml -lmpkgmk -lpopt -Llib assemble.o build.o configuration.o download.o extraction.o main.o modules.o recipe.o workdir.o package.o opts.o
 
 assemble.o: assemble.c assemble.h
 	@echo '  [CC]    assemble.o'
@@ -98,6 +98,14 @@ package.o.clean:
 	@echo '  [RM]    package.o'
 	$(Q)rm -f package.o
 
+opts.o: opts.c opts.h
+	@echo '  [CC]    opts.o'
+	$(Q)$(CC) $(CFLAGS) -DLIBDIR=\"$(LIBDIR)/mpkgmk\" -DSHAREDIR=\"$(SHAREDIR)/mpkgmk\" -Iinclude -c opts.c
+
+opts.o.clean:
+	@echo '  [RM]    opts.o'
+	$(Q)rm -f opts.o
+
 mpkgmk.install: mpkgmk
 	@echo '  [IN]    $(BINDIR)/mpkgmk'
 	$(Q)install -m0755 mpkgmk $(DESTDIR)$(BINDIR)/mpkgmk
@@ -138,7 +146,7 @@ uninstall: subdirs.uninstall mpkgmk.uninstall
 subdirs.uninstall:
 	$(Q)for i in modules include; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" uninstall); done
 
-clean: mpkgmk.clean assemble.o.clean build.o.clean configuration.o.clean download.o.clean extraction.o.clean main.o.clean modules.o.clean recipe.o.clean workdir.o.clean package.o.clean
+clean: mpkgmk.clean assemble.o.clean build.o.clean configuration.o.clean download.o.clean extraction.o.clean main.o.clean modules.o.clean recipe.o.clean workdir.o.clean package.o.clean opts.o.clean
 	$(Q)for i in modules include; do (cd "$$i" && $(MAKE) Q=$(Q) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)" BINDIR="$(BINDIR)" LIBDIR="$(LIBDIR)" SHAREDIR="$(SHAREDIR)" INCLUDEDIR="$(INCLUDEDIR)" clean); done
 
 distclean: clean
