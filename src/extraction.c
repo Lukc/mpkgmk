@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "path_max.h"
 #include "ui.h"
 #include "extraction.h"
@@ -17,6 +19,7 @@ extract(RecipeElement *recipe, Module **modules, Configuration *configuration, S
 
 	getcwd(cwd, PATH_MAX);
 
+	/* FIXME: unchecked return value */
 	chdir(configuration->sources_directory);
 
 	i = 0;

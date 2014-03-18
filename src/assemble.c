@@ -19,8 +19,9 @@ assemble(RecipeElement *recipe, Package *packages, Module **modules, Configurati
 				error("Oops! Assembling failed. :(((");
 
 				exit(ERROR_PACKAGING_FAILED);
-			} else if (ret == MODULE_SUCCEEDED)
+			} else if (ret == MODULE_SUCCEEDED) {
 				return;
+			}
 		}
 
 		i++;

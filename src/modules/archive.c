@@ -41,7 +41,7 @@ mpkgmk_extractor(Source *source, Configuration *configuration) {
 		a, filename, 1
 	);
 
-	info("%s", filename);
+	info("Extracting %s", filename);
 
 	free(filename);
 
@@ -52,12 +52,12 @@ mpkgmk_extractor(Source *source, Configuration *configuration) {
 		filename = (char *) malloc(
 			sizeof(char) * (
 				strlen(filename2) +
-				strlen(configuration->working_directory) + 2
+				strlen(configuration->working_directory) + 6
 			)
 		);
 		sprintf(
 			filename,
-			"%s/%s", configuration->working_directory, filename2
+			"%s/src/%s", configuration->working_directory, filename2
 		);
 
 		archive_entry_set_pathname(e, filename);

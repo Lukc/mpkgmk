@@ -30,20 +30,22 @@ mpkgmk_assembler(RecipeElement *recipe, Package *packages, Configuration *config
 		);
 
 		cmd = (char*) malloc(sizeof(char) * (
-			1 +
+			5 +
 			strlen(filename) +
 			strlen(configuration->working_directory) +
 			strlen("(cd ''; tar cJf '' *)")
 		));
 		sprintf(
-			cmd, "(cd '%s'; tar cJf '%s' *)",
+			cmd, "(cd '%s/pkg'; tar cJf '%s' *)",
 			configuration->working_directory,
 			filename
 		);
 
-		if (system(cmd) == 0)
+		if (system(cmd) == 0) {
+			info("Building %s succeeded!", filename);
+
 			return MODULE_SUCCEEDED;
-		else
+		} else
 			return MODULE_FAILED;
 	}
 

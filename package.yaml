@@ -18,16 +18,15 @@ groups: [system, shell]
 build-depends:
 
 # Occasionally required features.
-configure: |
-  echo FOOBAR
-  cd hello-2.8
-  ./configure --prefix=$prefix
-build: |
-  cd hello-2.8
-  make
-install: |
-  cd hello-2.8
-  make DESTDIR="$PKG" install
+configure:
+  cd src/hello-2.8;
+  ./configure --prefix=/usr --mandir=/usr/man;
+build:
+  cd src/hello-2.8;
+  make;
+install:
+  cd src/hello-2.8;
+  make DESTDIR="$(pwd)/../../pkg" install;
 
 splits:
   - name: libhello
@@ -41,8 +40,8 @@ splits:
 # Complex features. Never required.
 use:
   -
-    - flag: nls
-    - depends:
+    flag: nls
+    depends:
       - +gettext
       - blah >= 1.4
       - -libfoo
