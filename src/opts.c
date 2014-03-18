@@ -5,20 +5,6 @@
 #include "error.h"
 #include "opts.h"
 
-/* Just because. */
-#define OPTIONS 64
-
-static inline void
-register_option(struct poptOption *option, char *l, char s, int info, char *arg, int val, char *desc, char *argdesc) {
-	option->longName = l;
-	option->shortName = s;
-	option->argInfo = info;
-	option->arg = arg;
-	option->val = val;
-	option->descrip = desc;
-	option->argDescrip = argdesc;
-}
-
 void
 parse_options(int argc, char *argv[], Configuration *configuration) {
 	poptContext context;
