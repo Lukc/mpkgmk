@@ -15,9 +15,6 @@ download(RecipeElement *recipe, Module **modules, Configuration *configuration, 
 	FILE *f;
 	Module *module;
 
-	if (!configuration->download || !sources)
-		return;
-
 	getcwd(cwd, PATH_MAX);
 
 	chdir(configuration->sources_directory);
@@ -32,6 +29,12 @@ download(RecipeElement *recipe, Module **modules, Configuration *configuration, 
 			was_downloaded = 1;
 			fclose(f);
 		} else {
+			if (!configuration->download) {
+				error("File not found: %s");
+				error("Start again with -d to download it.");
+				exit(ERROR_MISSING_FILE);
+			}
+
 			while (modules[j]) {
 				module = modules[j];
 

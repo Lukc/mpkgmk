@@ -10,6 +10,8 @@ parse_options(int argc, char *argv[], Configuration *configuration) {
 	poptContext context;
 	char c;
 	struct poptOption options[] = {
+		{"download", 'd', 0, NULL, 'd', "Download missing files.", NULL},
+		{"no-download", 'D', 0, NULL, 'D', "Do not download missing files.", NULL},
 		POPT_AUTOHELP
 		{ NULL, 0, 0, NULL, 0, NULL, NULL}
 	};
@@ -19,8 +21,11 @@ parse_options(int argc, char *argv[], Configuration *configuration) {
 
 	while ((c = poptGetNextOpt(context)) >= 0) {
 		switch (c) {
-			case 't':
-				printf("test?\n");
+			case 'd':
+				configuration->download = 1;
+				break;
+			case 'D':
+				configuration->download = 0;
 				break;
 			default:
 				printf(" >> %c\n", c);

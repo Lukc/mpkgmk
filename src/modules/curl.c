@@ -26,6 +26,8 @@ mpkgmk_downloader(Source *source, Configuration *configuration) {
 	);
 
 	if (i) {
+		info("Downloading %s", source->filename);
+
 		handle = curl_easy_init();
 
 		filename = (char*) malloc(sizeof(char) * (
