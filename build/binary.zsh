@@ -14,11 +14,6 @@ function binary.build {
 		write "\t@echo '$(CC ${i%.c}.o)'"
 		write "\t$Q\$(CC) \$(CFLAGS) ${cflags[$target]} -c ${i}"
 		write
-
-		write "${i%.c}.o.clean:"
-		write "\t@echo '$(RM ${i%.c}.o)'"
-		write "\t${Q}rm -f ${i%.c}.o"
-		write
 	done
 }
 
@@ -36,5 +31,19 @@ function binary.uninstall {
 	write "\t@echo '$(RM ${install}/${target})'"
 	write "\t${Q}rm -f '\$(DESTDIR)${install}/${target}'"
 	write
+}
+
+function binary.clean {
+	write "${target}.clean:"
+	write "\t@echo '$(RM ${target})'"
+	write "\t${Q}rm -f ${target}"
+	write
+
+	for i in ${src[@]}; do
+		write "${i%.c}.o.clean:"
+		write "\t@echo '$(RM ${i%.c}.o)'"
+		write "\t${Q}rm -f ${i%.c}.o"
+		write
+	done
 }
 

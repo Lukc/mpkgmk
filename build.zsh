@@ -163,6 +163,15 @@ function main {
 		write "PACKAGE = '$package'"
 		write "VERSION = '$version'"
 		write
+	else
+		if $root; then
+			error "No \$package or no \$version defined in your project.zsh!"
+			error "Making tarballs and other stuff will be disabled."
+			error "(please note that those variables should be defined only..."
+			error " ... in the root directory of your project’s repository)"
+
+			root=false
+		fi
 	fi
 
 	for prefix path in ${prefixes[@]}; do
@@ -358,6 +367,7 @@ while (($# > 0)); do
 			echo "   -h, --help           Print this help message."
 			echo "   -c, --colors         Use colors in your Makefiles"
 			echo "                        (relies on zsh/colors and your current \$TERM)"
+			return 0
 		;;
 		*)
 			error "unrecognised parameter: $1"
